@@ -66,12 +66,12 @@ function fixAnalysis(analysis) {
               // For each demo.
               for (let k = 0; k < analysis.namespaces[i].elements[j].demos.length; k++) {
                 // Prefix its url.
-                analysis.namespaces[i].elements[j].demos[k].url = catalystElementsPath + '/' + analysis.namespaces[i].elements[j].tagname + '/' + analysis.namespaces[i].elements[j].demos[k].url;
+                analysis.namespaces[i].elements[j].demos[k].url = `${catalystElementsPath}/${analysis.namespaces[i].elements[j].tagname}/${analysis.namespaces[i].elements[j].demos[k].url}`;
               }
             }
 
             // Change the path.
-            analysis.namespaces[i].elements[j].path = 'dist/' + bundleName + '.js';
+            analysis.namespaces[i].elements[j].path = `dist/${bundleName}.js`;
 
             // If `events` is defined
             if (analysis.namespaces[i].elements[j].events) {
@@ -103,59 +103,59 @@ gulp.task('clean-tmp', () => {
 
 // Build the es6 full version of the components.
 gulp.task('build-es6-full', () => {
-  return gulp.src(catalystElementsPath + '/*/src/*.js')
-    .pipe(concat(bundleName + '.js'))
+  return gulp.src(`${catalystElementsPath}/*/src/*.js`)
+    .pipe(concat(`${bundleName}.js`))
     .pipe(gulp.dest(tmpPath));
 });
 
 // Build the es6 version of the components.
 gulp.task('build-es6', () => {
-  return gulp.src(catalystElementsPath + '/*/src/*.js')
-    .pipe(concat(bundleName + '.js'))
+  return gulp.src(`${catalystElementsPath}/*/src/*.js`)
+    .pipe(concat(`${bundleName}.js`))
     .pipe(stripComments())
     .pipe(gulp.dest(distPath));
 });
 
 // Build the minified es6 version of the components.
 gulp.task('build-es6-min', () => {
-  return gulp.src(distPath + '/' + bundleName + '.js')
+  return gulp.src(`${distPath}/${bundleName}.js`)
     .pipe(closureCompiler({
       compilation_level: 'SIMPLE_OPTIMIZATIONS',
       warning_level: 'QUIET',
       language_in: 'ECMASCRIPT6_STRICT',
       language_out: 'ECMASCRIPT6_STRICT',
       output_wrapper: '(()=>{\n%output%\n}).call(this)',
-      js_output_file: bundleName + '.min.js'
+      js_output_file: `${bundleName}.min.js`
     }))
     .pipe(gulp.dest(distPath));
 });
 
 // Build the minified es5 version of the components.
 gulp.task('build-es5-min', () => {
-  return gulp.src(distPath + '/' + bundleName + '.js')
+  return gulp.src(`${distPath}/${bundleName}.js`)
     .pipe(closureCompiler({
       compilation_level: 'SIMPLE_OPTIMIZATIONS',
       warning_level: 'QUIET',
       language_in: 'ECMASCRIPT6_STRICT',
       language_out: 'ECMASCRIPT5_STRICT',
       output_wrapper: '(function(){\n%output%\n}).call(this)',
-      js_output_file: bundleName + '.es5.min.js'
+      js_output_file: `${bundleName}.es5.min.js`
     }))
     .pipe(gulp.dest(distPath));
 });
 
 // Analyze the elements file.
 gulp.task('create-analysis', () => {
-  return analyzer.analyze([tmpPath + '/' + bundleName + '.js']).then((analysis) => {
+  return analyzer.analyze([`${tmpPath}/${bundleName}.js`]).then((analysis) => {
     let analysisFileContents = JSON.stringify(fixAnalysis(generateAnalysis(analysis, analyzer.urlResolver)));
-    return file(analysisFilename + '.json', analysisFileContents, { src: true })
+    return file(`${analysisFilename}.json`, analysisFileContents, { src: true })
       .pipe(gulp.dest('./'));
   });
 });
 
 // Fix node_modules broken link for demos.
 gulp.task('demo-dependencies-linker-node-modules', () => {
-  return gulp.src(['docs/' + catalystElementsPath + '/*', catalystElementsPath + '/*'])
+  return gulp.src([`docs/${catalystElementsPath}/*`, `${catalystElementsPath}/*`])
     .pipe(foreach(function(stream, file){
       return gulp.src('node_modules')
         .pipe(gulp.symlink(file.history[0], {
@@ -166,10 +166,10 @@ gulp.task('demo-dependencies-linker-node-modules', () => {
 
 // Fix bower_components broken link for demos.
 gulp.task('demo-dependencies-linker-bower-components', () => {
-  return gulp.src(['docs/' + catalystElementsPath + '/*', catalystElementsPath + '/*'])
+  return gulp.src([`docs/${catalystElementsPath}/*`, `${catalystElementsPath}/*`])
     .pipe(foreach(function(stream, file) {
       let src = 'node_modules/@bower_components';
-      let dest = file.history[0] + '/bower_components';
+      let dest = `${file.history[0]}/bower_components`;
       if (!fs.existsSync(dest)) {
         fs.symlinkSync(src, dest, 'dir', () => {});
       }
