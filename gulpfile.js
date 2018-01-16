@@ -43,6 +43,57 @@ function classNameToElementName(className) {
   return className.substring(className.lastIndexOf('.') + 1).split(/(?=[A-Z])/).join('-').toLowerCase();
 }
 
+/**
+ * Fix issues with the automatically generated analysis.
+ *
+ * * @param {object} analysis
+ */
+function fixAnalysis(analysis) {
+  // If `namespaces` is defined.
+  if (analysis.namespaces) {
+    for (let i = 0; i < analysis.namespaces.length; i++) {
+      if (analysis.namespaces[i].name === "CatalystElements") {
+
+        // If `elements` is defined.
+        if (analysis.namespaces[i].elements) {
+          // For each element.
+          for (let j = 0; j < analysis.namespaces[i].elements.length; j++) {
+
+            // If the element's tag name is not set, set it.
+            if (analysis.namespaces[i].elements[j].tagname === undefined) {
+              analysis.namespaces[i].elements[j].tagname = classNameToElementName(analysis.namespaces[i].elements[j].name);
+            }
+
+            // If `demos` is defined.
+            if (analysis.namespaces[i].elements[j].demos) {
+              // For each demo.
+              for (let k = 0; k < analysis.namespaces[i].elements[j].demos.length; k++) {
+                // Prefix its url.
+                analysis.namespaces[i].elements[j].demos[k].url = catalystElementsPath + '/' + analysis.namespaces[i].elements[j].tagname + '/' + analysis.namespaces[i].elements[j].demos[k].url;
+              }
+            }
+
+            // Change the path.
+            analysis.namespaces[i].elements[j].path = 'dist/' + bundleName + '.js';
+
+            // If `events` is defined
+            if (analysis.namespaces[i].elements[j].events) {
+              // For each event.
+              for (let k = 0; k < analysis.namespaces[i].elements[j].events.length; k++) {
+                // Fix up event descriptions.
+                // Remove the name of the event from the beginning of its description.
+                analysis.namespaces[i].elements[j].events[k].description = analysis.namespaces[i].elements[j].events[k].description.replace(new RegExp('^' + analysis.namespaces[i].elements[j].events[k].name), '').trim();
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return analysis;
+}
+
 // Clean the dist path.
 gulp.task('clean-dist', () => {
   return gulp.src(distPath, {read: false, allowEmpty: true}).pipe(clean());
@@ -139,51 +190,7 @@ gulp.task('demo-dependencies-linker', gulp.series(
 gulp.task('analysis-fixer', () => {
   return gulp.src('./' + analysisFilename + '.json')
     .pipe(jsonEditor(function(json) {
-
-      // If `namespaces` is defined.
-      if (json.namespaces) {
-        for (let i = 0; i < json.namespaces.length; i++) {
-          if (json.namespaces[i].name === "CatalystElements") {
-
-            // If `elements` is defined.
-            if (json.namespaces[i].elements) {
-              // For each element.
-              for (let j = 0; j < json.namespaces[i].elements.length; j++) {
-
-                // If the element's tag name is not set, set it.
-                if (json.namespaces[i].elements[j].tagname === undefined) {
-                  json.namespaces[i].elements[j].tagname = classNameToElementName(json.namespaces[i].elements[j].name);
-                }
-
-                // If `demos` is defined.
-                if (json.namespaces[i].elements[j].demos) {
-                  // For each demo.
-                  for (let k = 0; k < json.namespaces[i].elements[j].demos.length; k++) {
-                    // Prefix its url.
-                    json.namespaces[i].elements[j].demos[k].url = catalystElementsPath + '/' + json.namespaces[i].elements[j].tagname + '/' + json.namespaces[i].elements[j].demos[k].url;
-                  }
-                }
-
-                // Change the path.
-                json.namespaces[i].elements[j].path = 'dist/' + bundleName + '.js';
-
-                // If `events` is defined
-                if (json.namespaces[i].elements[j].events) {
-                  // For each event.
-                  for (let k = 0; k < json.namespaces[i].elements[j].events.length; k++) {
-                    // Fix up event descriptions.
-                    // Remove the name of the event from the beginning of its description.
-                    json.namespaces[i].elements[j].events[k].description = json.namespaces[i].elements[j].events[k].description.replace(new RegExp('^' + json.namespaces[i].elements[j].events[k].name), '').trim();
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-
-      // Return the modified json.
-      return json;
+      return fixAnalysis(json);
     }))
     .pipe(gulp.dest("./"));
 });
