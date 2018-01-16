@@ -1,0 +1,18 @@
+stages:
+  - pages
+
+pages:
+  stage: pages
+  image: node:8.9.3
+  script:
+    - yarn
+    - npm run analyze
+    - npm run build-docs
+    - mv docs public
+  artifacts:
+    paths:
+      - public
+  only:
+    - master
+  tags:
+    - docker
