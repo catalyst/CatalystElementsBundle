@@ -158,9 +158,12 @@ gulp.task('analysis-fixer', () => {
                 // Change the path.
                 json.namespaces[i].elements[j].path = 'dist/catalyst-elements.js';
 
-                // Fix up event descriptions.
+                // If `events` is defined
                 if (json.namespaces[i].elements[j].events) {
+                  // For each event.
                   for (let k = 0; k < json.namespaces[i].elements[j].events.length; k++) {
+                    // Fix up event descriptions.
+                    // Remove the name of the event from the beginning of its description.
                     json.namespaces[i].elements[j].events[k].description = json.namespaces[i].elements[j].events[k].description.replace(new RegExp('^' + json.namespaces[i].elements[j].events[k].name), '').trim();
                   }
                 }
