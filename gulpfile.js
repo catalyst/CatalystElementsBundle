@@ -150,7 +150,7 @@ gulp.task('build-es5-min', () => {
 // Analyze the elements file.
 gulp.task('create-analysis', () => {
   return analyzer.analyze([tmpPath + '/' + bundleName + '.js']).then((analysis) => {
-    let analysisFileContents = JSON.stringify(generateAnalysis(analysis, analyzer.urlResolver));
+    let analysisFileContents = JSON.stringify(fixAnalysis(generateAnalysis(analysis, analyzer.urlResolver)));
     return file(analysisFilename + '.json', analysisFileContents, { src: true })
       .pipe(gulp.dest('./'));
   });
@@ -186,15 +186,6 @@ gulp.task('demo-dependencies-linker', gulp.series(
   'demo-dependencies-linker-bower-components'
 ));
 
-// Fix issues with analysis.json
-gulp.task('analysis-fixer', () => {
-  return gulp.src('./' + analysisFilename + '.json')
-    .pipe(jsonEditor(function(json) {
-      return fixAnalysis(json);
-    }))
-    .pipe(gulp.dest("./"));
-});
-
 // Build all the components' versions.
 gulp.task('build', gulp.series('clean-dist', 'build-es6', gulp.parallel('build-es6-min', 'build-es5-min')));
 
@@ -205,7 +196,7 @@ gulp.task('build-docs', gulp.series('demo-dependencies-linker', () => {
 }));
 
 // Analyze all the components.
-gulp.task('analyze', gulp.series('build-es6-full', 'create-analysis', 'clean-tmp', 'analysis-fixer'));
+gulp.task('analyze', gulp.series('build-es6-full', 'create-analysis', 'clean-tmp'));
 
 // Default task.
 gulp.task('default', gulp.series('build'));
