@@ -52,6 +52,7 @@ function fixAnalysis(analysis) {
   // If `namespaces` is defined.
   if (analysis.namespaces) {
     for (let i = 0; i < analysis.namespaces.length; i++) {
+      // For the `CatalystElements` namespace.
       if (analysis.namespaces[i].name === "CatalystElements") {
 
         // If `elements` is defined.
