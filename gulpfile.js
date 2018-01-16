@@ -141,7 +141,7 @@ gulp.task('analysis-fixer', () => {
               // For each element.
               for (let j = 0; j < json.namespaces[i].elements.length; j++) {
 
-                // Figure out the element's tag if it's not set.
+                // If the element's tag name is not set, set it.
                 if (json.namespaces[i].elements[j].tagname === undefined) {
                   json.namespaces[i].elements[j].tagname = classNameToElementName(json.namespaces[i].elements[j].name);
                 }
