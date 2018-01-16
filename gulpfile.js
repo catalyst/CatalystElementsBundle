@@ -1,5 +1,3 @@
-/* eslint-env node */
-
 // Path to output distribution files.
 const distPath = './dist';
 
@@ -27,9 +25,7 @@ const concat = require('gulp-concat');
 const file = require('gulp-file');
 const foreach = require('gulp-foreach');
 const fs = require('graceful-fs');
-const jsonEditor = require('gulp-json-editor');
 const mergeStream = require('merge-stream');
-const rename = require('gulp-rename');
 const stripComments = require('gulp-strip-comments');
 
 /**
@@ -53,7 +49,7 @@ function fixAnalysis(analysis) {
   if (analysis.namespaces) {
     for (let i = 0; i < analysis.namespaces.length; i++) {
       // For the `CatalystElements` namespace.
-      if (analysis.namespaces[i].name === "CatalystElements") {
+      if (analysis.namespaces[i].name === 'CatalystElements') {
 
         // If `elements` is defined.
         if (analysis.namespaces[i].elements) {
