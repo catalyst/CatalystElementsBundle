@@ -186,7 +186,7 @@ gulp.task('demo-dependencies-linker', gulp.series(
 // Build all the components' versions.
 gulp.task('build', gulp.series('clean-dist', 'build-es6', gulp.parallel('build-es6-min', 'build-es5-min')));
 
-// Build all the components' versions.
+// Build the docs for all the components' versions.
 gulp.task('build-docs', gulp.series('demo-dependencies-linker', () => {
   return mergeStream(docBuilder.sources(), docBuilder.dependencies())
     .pipe(gulp.dest('docs'));
