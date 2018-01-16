@@ -81,7 +81,7 @@ gulp.task('build-es5-min', () => {
       warning_level: 'QUIET',
       language_in: 'ECMASCRIPT6_STRICT',
       language_out: 'ECMASCRIPT5_STRICT',
-      output_wrapper: '(()=>{\n%output%\n}).call(this)',
+      output_wrapper: '(function(){\n%output%\n}).call(this)',
       js_output_file: 'catalyst-elements.es5.min.js'
     }))
     .pipe(gulp.dest(distPath));
