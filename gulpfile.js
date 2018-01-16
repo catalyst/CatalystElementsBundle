@@ -171,7 +171,7 @@ gulp.task('demo-dependencies-linker-bower-components', () => {
       let src = 'node_modules/@bower_components';
       let dest = `${file.history[0]}/bower_components`;
       if (!fs.existsSync(dest)) {
-        fs.symlinkSync(src, dest, 'dir', () => {});
+        fs.symlinkSync(src, dest, 'dir');
       }
       return stream;
     }));
