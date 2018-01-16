@@ -88,7 +88,7 @@ gulp.task('build-es5-min', () => {
 });
 
 // Analyze the elements file.
-gulp.task('analysis', () => {
+gulp.task('create-analysis', () => {
   return analyzer.analyze([tmpPath + '/catalyst-elements.js']).then((analysis) => {
     let analysisDocument = JSON.stringify(generateAnalysis(analysis, analyzer.urlResolver));
     return file('analysis.json', analysisDocument, { src: true })
@@ -148,26 +148,11 @@ gulp.task('analysis-fixer', () => {
 
                 // If `demos` is defined.
                 if (json.namespaces[i].elements[j].demos) {
-                  // Fix issue with each demo appearing in the demo array twice.
-
-                  // Loop through each demo and save it if it has a url that no previous demo had.
-                  let demosObj = {};
+                  // For each demo.
                   for (let k = 0; k < json.namespaces[i].elements[j].demos.length; k++) {
-                    let url = 'node_modules/@catalyst-elements/' + json.namespaces[i].elements[j].tagname + '/' + json.namespaces[i].elements[j].demos[k].url;
-                    if (!demosObj[url]) {
-                      json.namespaces[i].elements[j].demos[k].url = url;
-                      demosObj[url] = json.namespaces[i].elements[j].demos[k];
-                    }
+                    // Prefix its url.
+                    json.namespaces[i].elements[j].demos[k].url = 'node_modules/@catalyst-elements/' + json.namespaces[i].elements[j].tagname + '/' + json.namespaces[i].elements[j].demos[k].url;
                   }
-
-                  // Convert the demo object into an array.
-                  let demosArr = [];
-                  for (let demo in demosObj) {
-                    demosArr.push(demosObj[demo]);
-                  }
-
-                  // Update the array of demos.
-                  json.namespaces[i].elements[j].demos = demosArr;
                 }
 
                 // Change the path.
@@ -201,7 +186,7 @@ gulp.task('build-docs', gulp.series('demo-dependencies-linker', () => {
 }));
 
 // Analyze all the components.
-gulp.task('analyze', gulp.series('build-es6-full', 'analysis', 'clean-tmp', 'analysis-fixer'));
+gulp.task('analyze', gulp.series('build-es6-full', 'create-analysis', 'clean-tmp', 'analysis-fixer'));
 
 // Default task.
 gulp.task('default', gulp.series('build'));
