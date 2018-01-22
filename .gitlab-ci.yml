@@ -22,7 +22,7 @@ update_elements:
   stage: pages
   image: node:8.9.3
   script:
-    - yarn upgrade
+    - echo "Test" > TestCI.txt
     - git add .
     - git commit -m "CI Trigger - update_elements - [skip ci]"
     - git push
