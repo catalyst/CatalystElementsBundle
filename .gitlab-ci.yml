@@ -1,7 +1,8 @@
 stages:
   - pages
+  - deploy
 
-pages:
+update_docs:
   stage: pages
   image: node:8.9.3
   script:
@@ -14,5 +15,18 @@ pages:
       - public
   only:
     - master
+  tags:
+    - docker
+
+update_elements:
+  stage: pages
+  image: node:8.9.3
+  script:
+    - yarn upgrade
+    - git add .
+    - git commit -m "CI Trigger - update_elements - [skip ci]"
+    - git push
+  only:
+    - triggers
   tags:
     - docker
