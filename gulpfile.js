@@ -101,16 +101,17 @@ gulp.task('clean-tmp', () => {
   return gulp.src(tmpPath, {read: false, allowEmpty: true}).pipe(clean());
 });
 
-// Build the es6 full version of the components.
-gulp.task('build-es6-full', () => {
+// Build the components with comments for analysis.
+// Note: HTML and CSS are not inject.
+gulp.task('build-for-analysis', () => {
   return gulp.src(`${catalystElementsPath}/*/src/*.js`)
-    .pipe(concat(`${bundleName}.js`))
+    .pipe(concat(`${bundleName}-analysis.js`))
     .pipe(gulp.dest(tmpPath));
 });
 
 // Build the es6 version of the components.
 gulp.task('build-es6', () => {
-  return gulp.src(`${catalystElementsPath}/*/src/*.js`)
+  return gulp.src([`${catalystElementsPath}/*/dist/*.js`, '!**/*.min.*', '!**/*.es5.*'])
     .pipe(concat(`${bundleName}.js`))
     .pipe(stripComments())
     .pipe(gulp.dest(distPath));
@@ -146,7 +147,7 @@ gulp.task('build-es5-min', () => {
 
 // Analyze the elements file.
 gulp.task('create-analysis', () => {
-  return analyzer.analyze([`${tmpPath}/${bundleName}.js`]).then((analysis) => {
+  return analyzer.analyze([`${tmpPath}/${bundleName}-analysis.js`]).then((analysis) => {
     let analysisFileContents = JSON.stringify(fixAnalysis(generateAnalysis(analysis, analyzer.urlResolver)));
     return file(`${analysisFilename}.json`, analysisFileContents, { src: true })
       .pipe(gulp.dest('./'));
@@ -156,7 +157,7 @@ gulp.task('create-analysis', () => {
 // Fix node_modules broken link for demos.
 gulp.task('demo-dependencies-linker-node-modules', () => {
   return gulp.src([`docs/${catalystElementsPath}/*`, `${catalystElementsPath}/*`])
-    .pipe(foreach(function(stream, file){
+    .pipe(foreach(function(stream, file) {
       return gulp.src('node_modules')
         .pipe(gulp.symlink(file.history[0], {
           relativeSymlinks: true
@@ -193,7 +194,7 @@ gulp.task('build-docs', gulp.series('demo-dependencies-linker', () => {
 }));
 
 // Analyze all the components.
-gulp.task('analyze', gulp.series('build-es6-full', 'create-analysis', 'clean-tmp'));
+gulp.task('analyze', gulp.series('build-for-analysis', 'create-analysis', 'clean-tmp'));
 
 // Default task.
 gulp.task('default', gulp.series('build'));

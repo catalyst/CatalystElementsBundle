@@ -2,6 +2,8 @@
 
   window.CatalystElements = window.CatalystElements || {};
 
+  const isIE11 = !!navigator.userAgent.match(/Trident\/7\./);
+
   function createElement() {
 
     const elementTagName = 'catalyst-flip-button';
@@ -16,7 +18,7 @@
     };
 
     const template = document.createElement('template');
-    template.innerHTML = `<style>[[inject:style]][[endinject]]</style>[[inject:template]][[endinject]]`;
+    template.innerHTML = `<style>:host{position:relative;display:inline-block;-webkit-box-align:start;-ms-flex-align:start;align-items:flex-start;padding:1px 6px;margin:0;font-family:inherit;font-size:83.33333%;font-style:normal;font-weight:400;line-height:normal;letter-spacing:normal;word-spacing:normal;color:#000;color:ButtonText;text-align:center;text-indent:0;text-rendering:auto;text-shadow:none;text-transform:none;vertical-align:bottom;cursor:default;-webkit-box-sizing:content-box;box-sizing:content-box;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-perspective:100px;perspective:100px;contain:layout style}:host #card{position:absolute;top:0;right:0;bottom:0;left:0;-webkit-transition:-webkit-transform .4s ease;transition:-webkit-transform .4s ease;transition:transform .4s ease;transition:transform .4s ease,-webkit-transform .4s ease;-webkit-transform-style:preserve-3d;transform-style:preserve-3d}:host #card #back,:host #card #front{position:absolute;top:0;right:0;bottom:0;left:0;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;margin:0;background:#ddd;background:ButtonFace;background:var(--catalyst-flip-button-card-face-background,ButtonFace);border:2px outset ButtonFace;border:var(--catalyst-flip-button-card-face-border,2px outset ButtonFace);border-radius:var(--catalyst-flip-button-card-face-border-radius,0);-webkit-backface-visibility:hidden;backface-visibility:hidden;-webkit-appearance:var(--catalyst-flip-button-card-face-appearance,button);-moz-appearance:var(--catalyst-flip-button-card-face-appearance,button)}:host #card #back{-webkit-transform:rotateY(180deg);transform:rotateY(180deg)}:host(:focus){outline:none}:host(:focus) #card #back,:host(:focus) #card #front{outline:var(--catalyst-flip-button-card-face-focused-outline,#000 dotted 1px)}:host([hidden]),:host [hidden]{display:none}</style><div id="card"><div id="front"></div><div id="back"></div></div><div hidden><slot></slot></div>`;
 
     if (window.ShadyCSS !== undefined) {
       window.ShadyCSS.prepareTemplate(template, elementTagName);
@@ -75,7 +77,9 @@
           childList: true
         });
 
-        this._setUpDimensions();
+        setTimeout(() => {
+          this._setUpDimensions();
+        }, 0);
 
         if (window.ShadyCSS !== undefined) {
           window.ShadyCSS.styleElement(this);
@@ -115,7 +119,7 @@
               childList: true
             });
 
-            if (this._selectElement.labels.length > 0) {
+            if (this._selectElement.labels && this._selectElement.labels.length > 0) {
               let labelledBy = [];
               for (let i = 0; i < this._selectElement.labels.length; i++) {
                 let label = this._selectElement.labels[i];
@@ -343,12 +347,18 @@
           return;
         }
 
-        let option = this._selectElement.selectedOptions[0];
+        let option = this._selectElement.options[this._selectElement.selectedIndex];
 
         if (this._flipped) {
           this._cardBackFace.textContent = option.textContent;
         } else {
           this._cardFrontFace.textContent = option.textContent;
+        }
+
+        if (isIE11) {
+          let backfaceVisibility = this._flipped ? 'visible' : 'hidden';
+          this._cardFrontFace.style.backfaceVisibility = backfaceVisibility;
+          this._cardBackFace.style.backfaceVisibility = backfaceVisibility;
         }
 
         this._update();
@@ -504,7 +514,7 @@
     };
 
     const template = document.createElement('template');
-    template.innerHTML = `<style>[[inject:style]][[endinject]]</style>[[inject:template]][[endinject]]`;
+    template.innerHTML = `<style>:host{display:inline-block;-webkit-box-align:start;-ms-flex-align:start;align-items:flex-start;padding:2px 7px;margin:0;font:400 13.3333px Arial;letter-spacing:normal;word-spacing:normal;color:#000;text-align:center;text-indent:0;text-rendering:auto;text-shadow:none;text-transform:none;cursor:default;background-color:#ddd;border:2px outset #ddd;-o-border-image:none;border-image:none;-o-border-image:initial;border-image:initial;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-appearance:button;-moz-appearance:button}:host([pressed]){padding:2px 6px 2px 8px;color:#000;text-shadow:.5px .5px 1px #f0f0f0;background-color:#bbb;border-color:#aaa;border-style:inset}:host([hidden]){display:none}</style><slot></slot>`;
 
     if (window.ShadyCSS !== undefined) {
       window.ShadyCSS.prepareTemplate(template, elementTagName);
