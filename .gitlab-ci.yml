@@ -1,6 +1,6 @@
 stages:
-  - pages
   - deploy
+  - pages
 
 update_docs:
   stage: pages
@@ -19,8 +19,11 @@ update_docs:
     - docker
 
 update_elements:
-  stage: pages
+  stage: deploy
   image: node:8.9.3
+  before_script:
+    - apt-get update && apt-get install -y openssh-client rsync && mkdir -p ~/.ssh && echo "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa && chmod 0600 ~/.ssh/id_rsa && eval $(ssh-agent -s)
   script:
     - echo "Test" > TestCI.txt
     - git add .
