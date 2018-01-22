@@ -124,7 +124,7 @@ gulp.task('build-es6-min', () => {
       warning_level: 'QUIET',
       language_in: 'ECMASCRIPT6_STRICT',
       language_out: 'ECMASCRIPT6_STRICT',
-      output_wrapper: '(()=>{\n%output%\n}).call(this)',
+      output_wrapper: '(()=>{%output%}).call(this)',
       js_output_file: `${bundleName}.min.js`
     }))
     .pipe(gulp.dest(distPath));
@@ -138,7 +138,7 @@ gulp.task('build-es5-min', () => {
       warning_level: 'QUIET',
       language_in: 'ECMASCRIPT6_STRICT',
       language_out: 'ECMASCRIPT5_STRICT',
-      output_wrapper: '(function(){\n%output%\n}).call(this)',
+      output_wrapper: '(function(){%output%}).call(this)',
       js_output_file: `${bundleName}.es5.min.js`
     }))
     .pipe(gulp.dest(distPath));
