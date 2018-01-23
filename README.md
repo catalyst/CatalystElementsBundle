@@ -59,12 +59,16 @@ update_catalyst_elements:
   before_script:
     - apt-get update && apt-get install -y curl
   script:
-    - "curl -X POST -F token=$CATALYST_ELEMENTS_PIPELINE_TOKEN -F ref=CATALYST_ELEMENTS_PIPELINE_REF https://gitlab.wgtn.cat-it.co.nz/api/v4/projects/1077/trigger/pipeline"
+    - if [[ $CI_COMMIT_TAG =~ '^v?([0-9]+\.)?([0-9]+\.)?([0-9]+)$' ]]; then
+    -   curl -X POST -F token=$CATALYST_ELEMENTS_PIPELINE_TOKEN -F ref=CATALYST_ELEMENTS_PIPELINE_REF https://gitlab.wgtn.cat-it.co.nz/api/v4/projects/1077/trigger/pipeline
+    - else
+    -   echo "Skipping - $CI_COMMIT_TAG is not a version tag."
+    - fi
   only:
     - tags
 ```
 
-Now whenever a new tag is release for that element, this repo will be notified and will update accordingly.
+Now whenever a new version tag is release for that element, this repo will be notified and will update accordingly.
 
 ## Building the Bundle
 
