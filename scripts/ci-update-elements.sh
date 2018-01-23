@@ -52,7 +52,7 @@ if [[ $TAG =~ $VERSION_REGEX ]]; then
   done
 
   # Submit the release notes.
-  curl -X POST https://gitlab.wgtn.cat-it.co.nz/api/v4/projects/1077/repository/tags/$NEW_TAG/release -d '{"tag_name":"$NEW_TAG","description":"$(echo -e $RELEASE_NOTES)"}'
+  curl -X POST https://gitlab.wgtn.cat-it.co.nz/api/v4/projects/1077/repository/tags/$NEW_TAG/release -d "description=$(echo -e $RELEASE_NOTES)"
 
 # Tag isn't a version number.
 else
