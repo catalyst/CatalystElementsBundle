@@ -1,8 +1,16 @@
 #!/bin/bash
 
-# Update the catalyst-elements, build and commit.
+# Update the catalyst-elements and rebuild.
 yarn upgrade -S @catalyst-elements
 yarn run build
+
+# If there has been no changes.
+if [[ ! `git status --porcelain` ]]; then
+  echo "No changes to commit, exiting."
+  exit 0
+fi
+
+# Commit the update.
 git add .
 git commit -m "[CatalystElements Bot] - update_elements - [skip ci]"
 
