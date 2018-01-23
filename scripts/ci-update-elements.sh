@@ -24,7 +24,7 @@ VERSION_REGEX='^v?([0-9]+\.)?([0-9]+\.)?([0-9]+)$'
 # If the tag is a version number.
 if [[ $TAG =~ $VERSION_REGEX ]]; then
   # Split the tag into it's parts
-  TAG_BUFFER="$i.0.0"
+  TAG_BUFFER="$TAG.0.0"
   VERSION_ARR=(${TAG_BUFFER//./ })
 
   # Create the new tag name based of the last one.
