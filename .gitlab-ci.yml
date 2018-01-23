@@ -28,9 +28,10 @@ update_elements:
     - git config --global user.name "CatalystElements Bot"
     - git config --global push.default matching
   script:
-    - echo "Test" > TestCI.txt
+    - yarn upgrade -S @catalyst-elements
+    - yarn run build
     - git add .
-    - git commit -m "CI Trigger - update_elements - [skip ci]"
+    - git commit -m "[CatalystElements Bot] - update_elements - [skip ci]"
     - git push
   only:
     - triggers
