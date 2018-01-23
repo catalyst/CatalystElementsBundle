@@ -43,6 +43,29 @@ The element's key should be in the form `@catalyst-elements/element-name`.
 
 The element should now automatically be included in future builds.
 
+### Setting Up Automatic Builds
+
+When creating a new release of an element, that element can automatically trigger a new build of the catalyst-elements bundle.
+(The bundle will still need to be manually released).
+
+To set this up, configure the element's `.gitlab-ci.yml` file like so:
+
+```yml
+stages:
+  - deploy
+
+update_catalyst_elements:
+  stage: deploy
+  before_script:
+    - apt-get update && apt-get install -y curl
+  script:
+    - "curl -X POST -F token=$CATALYST_ELEMENTS_PIPELINE_TOKEN -F ref=CATALYST_ELEMENTS_PIPELINE_REF https://gitlab.wgtn.cat-it.co.nz/api/v4/projects/1077/trigger/pipeline"
+  only:
+    - tags
+```
+
+Now whenever a new tag is release for that element, this repo will be notified and will update accordingly.
+
 ## Building the Bundle
 
 First ensure all dependencies are install and that the catalyst-elements are up to date.
