@@ -45,8 +45,7 @@ The element should now automatically be included in future builds.
 
 ### Setting Up Automatic Builds
 
-When creating a new release of an element, that element can automatically trigger a new build of the catalyst-elements bundle.
-(The bundle will still need to be manually released).
+When creating a new release of an element, that element can automatically trigger a new build and release of the catalyst-elements bundle.
 
 To set this up, configure the element's `.gitlab-ci.yml` file like so:
 

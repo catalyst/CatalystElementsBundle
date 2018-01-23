@@ -22,17 +22,13 @@ update_elements:
   stage: deploy
   image: node:8.9.3
   before_script:
-    - apt-get update && apt-get install -y openssh-client rsync && mkdir -p ~/.ssh && echo "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+    - apt-get update && apt-get install -y openssh-client rsync jq && mkdir -p ~/.ssh && echo "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa && chmod 0600 ~/.ssh/id_rsa && eval $(ssh-agent -s)
     - git config --global user.email "catalystelementsbot@gitlab.wgtn.cat-it.co.nz"
     - git config --global user.name "CatalystElements Bot"
     - git config --global push.default matching
   script:
-    - yarn upgrade -S @catalyst-elements
-    - yarn run build
-    - git add .
-    - git commit -m "[CatalystElements Bot] - update_elements - [skip ci]"
-    - git push
+    - ./scripts/ci-update-elements.sh
   only:
     - triggers
   tags:
