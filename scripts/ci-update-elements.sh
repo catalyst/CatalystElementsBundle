@@ -37,6 +37,7 @@ if [[ $TAG =~ $VERSION_REGEX ]]; then
   git tag -a $NEW_TAG -m "Automatic Release - $NEW_TAG"
 
   # Push the commit and the tag.
+  echo "Pushing commit and new tag."
   git push
 
   # Create the release notes for the tag.
@@ -52,14 +53,16 @@ if [[ $TAG =~ $VERSION_REGEX ]]; then
   done
 
   # Submit the release notes.
+  echo "Submitting release notes."
   curl -X POST https://gitlab.wgtn.cat-it.co.nz/api/v4/projects/1077/repository/tags/$NEW_TAG/release -d "description=$(echo -e $RELEASE_NOTES)"
 
 # Tag isn't a version number.
 else
-  # Push the commit.
-  git push
-
   # Report tag not created.
   echo "Cannot automatically create new tag; the current tag ($TAG) is not a version number."
   echo "Please create the tag manually."
+
+  # Push the commit.
+  echo "Pushing commit."
+  git push
 fi
