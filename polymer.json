@@ -7,9 +7,9 @@
     "node_modules/@catalyst-elements/**"
   ],
   "extraDependencies": [
-    "node_modules/@webcomponents/webcomponentsjs/*.js",
-    "node_modules/@webcomponents/shadycss/*.js",
-    "node_modules/@bower_components/iron-demo-helpers/demo-snippet.html",
+    "node_modules/@webcomponents/webcomponentsjs/**/*",
+    "node_modules/@webcomponents/shadycss/**/*",
+    "node_modules/@bower_components/iron-demo-helpers/**/*",
     "dist/**/*",
     "analysis.json"
   ],
