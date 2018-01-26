@@ -19,12 +19,12 @@ const {Analyzer, generateAnalysis} = require('polymer-analyzer');
 const analyzer = Analyzer.createForDirectory('./');
 const Builder = require('polymer-build').PolymerProject;
 const docBuilder = new Builder(require('./polymer.json'));
+const change = require('gulp-change');
 const clean = require('gulp-clean');
+const del = require('del');
 const closureCompiler = require('google-closure-compiler').gulp();
 const concat = require('gulp-concat');
 const file = require('gulp-file');
-const foreach = require('gulp-foreach');
-const fs = require('graceful-fs');
 const mergeStream = require('merge-stream');
 const stripComments = require('gulp-strip-comments');
 
@@ -154,44 +154,27 @@ gulp.task('create-analysis', () => {
   });
 });
 
-// Fix node_modules broken link for demos.
-gulp.task('demo-dependencies-linker-node-modules', () => {
-  return gulp.src([`docs/${catalystElementsPath}/*`, `${catalystElementsPath}/*`])
-    .pipe(foreach(function(stream, file) {
-      return gulp.src('node_modules')
-        .pipe(gulp.symlink(file.history[0], {
-          relativeSymlinks: true
-        }));
-    }));
+// Fix import paths that the demos use.
+gulp.task('fix-demo-paths', function(){
+  return gulp.src(`docs/${catalystElementsPath}/*/demo/**/*.html`)
+    .pipe(change((content) => {
+      return content.replace(/\.\.\/node_modules\//g, '../../../');
+    }))
+    .pipe(gulp.dest(`docs/${catalystElementsPath}`));
 });
-
-// Fix bower_components broken link for demos.
-gulp.task('demo-dependencies-linker-bower-components', () => {
-  return gulp.src([`docs/${catalystElementsPath}/*`, `${catalystElementsPath}/*`])
-    .pipe(foreach(function(stream, file) {
-      let src = 'node_modules/@bower_components';
-      let dest = `${file.history[0]}/bower_components`;
-      if (!fs.existsSync(dest)) {
-        fs.symlinkSync(src, dest, 'dir');
-      }
-      return stream;
-    }));
-});
-
-// Fix broken links for demos.
-gulp.task('demo-dependencies-linker', gulp.series(
-  'demo-dependencies-linker-node-modules',
-  'demo-dependencies-linker-bower-components'
-));
 
 // Build all the components' versions.
 gulp.task('build', gulp.series('clean-dist', 'build-es6', gulp.parallel('build-es6-min', 'build-es5-min')));
 
 // Build the docs for all the components' versions.
-gulp.task('build-docs', gulp.series('demo-dependencies-linker', () => {
+gulp.task('build-docs', gulp.series((done) => {
+  del(`${catalystElementsPath}/*/bower_components`).then(() => {
+    done();
+  });
+}, () => {
   return mergeStream(docBuilder.sources(), docBuilder.dependencies())
     .pipe(gulp.dest('docs'));
-}));
+}, 'fix-demo-paths'));
 
 // Analyze all the components.
 gulp.task('analyze', gulp.series('build-for-analysis', 'create-analysis', 'clean-tmp'));
