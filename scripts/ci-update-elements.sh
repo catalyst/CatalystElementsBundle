@@ -5,6 +5,9 @@ echo deb http://http.debian.net/debian jessie-backports main >> /etc/apt/sources
 apt-get update
 apt-get -y install -t jessie-backports openjdk-8-jre-headless ca-certificates-java
 
+# Install jq
+apt-get -y install jq
+
 # Install the dependencies, update the catalyst-elements and rebuild.
 yarn install
 yarn upgrade -S @catalyst-elements
@@ -44,6 +47,9 @@ if [[ $TAG =~ $VERSION_REGEX ]]; then
     echo "Failed to create tag: $NEW_TAG."
     exit 1
   fi
+
+  # Update the package.json version.
+  jq ".version = \"$NEW_TAG\"" package.json > package.tmp.json && mv package.tmp.json package.json
 
   # Push the commit and the tag.
   echo "Pushing commit and new tag."
