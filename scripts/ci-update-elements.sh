@@ -40,10 +40,18 @@ if [[ $TAG =~ $VERSION_REGEX ]]; then
 
   # Create the tag.
   git tag -a $NEW_TAG -m "Automatic Release - $NEW_TAG"
+  if [[ $? -ne 0 ]]; then
+    echo "Failed to create tag: $NEW_TAG."
+    exit 1
+  fi
 
   # Push the commit and the tag.
   echo "Pushing commit and new tag."
   git push
+  if [[ $? -ne 0 ]]; then
+    echo "Failed to push commit and tag."
+    exit 1
+  fi
 
   # Create the release notes for the tag.
   RELEASE_NOTES='## Bundled Elements\n\n'
@@ -74,4 +82,8 @@ else
   # Push the commit.
   echo "Pushing commit."
   git push
+  if [[ $? -ne 0 ]]; then
+    echo "Failed to push commit."
+    exit 1
+  fi
 fi
