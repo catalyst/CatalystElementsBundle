@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Install Java.
+echo deb http://http.debian.net/debian jessie-backports main >> /etc/apt/sources.list
+apt-get update
+apt-get -y install -t jessie-backports openjdk-8-jre-headless ca-certificates-java
+
 # Install the dependencies, update the catalyst-elements and rebuild.
 yarn install
 yarn upgrade -S @catalyst-elements
