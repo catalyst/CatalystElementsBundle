@@ -1,6 +1,6 @@
 {
-  "name": "CatalystElements",
-  "version": "0.1.0",
+  "name": "@catalyst-elements/bundle",
+  "version": "0.1.1",
   "description": "A collection of all the catalyst elements.",
   "repository": "git@gitlab.wgtn.cat-it.co.nz:CatalystElements/CatalystElements.git",
   "license": "BSD-3-Clause",
@@ -61,15 +61,20 @@
     "@bower_components/webcomponentsjs": "webcomponents/webcomponentsjs#^v1.0.20",
     "@webcomponents/shadycss": "^1.1.0",
     "@webcomponents/webcomponentsjs": "^1.0.20",
+    "del": "^3.0.0",
+    "esprima": "^4.0.0",
     "google-closure-compiler": "^20180101.0.0",
     "gulp": "^4.0.0",
+    "gulp-change": "^1.0.0",
     "gulp-clean": "^0.4.0",
     "gulp-concat": "^2.6.1",
     "gulp-file": "^0.4.0",
-    "gulp-foreach": "^0.1.0",
+    "gulp-rename": "^1.2.2",
     "gulp-strip-comments": "^2.5.2",
+    "gulp-webpack": "^1.5.0",
     "merge-stream": "^1.0.1",
     "polymer-analyzer": "^v3.0.0-pre.7",
-    "polymer-build": "^2.1.1"
+    "polymer-build": "^2.1.1",
+    "webpack": "^3.10.0"
   }
 }
