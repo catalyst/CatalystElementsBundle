@@ -1,3 +1,6 @@
+// Path to the source files.
+const srcPath = './src';
+
 // Path to output distribution files.
 const distPath = './dist';
 
@@ -24,9 +27,13 @@ const clean = require('gulp-clean');
 const del = require('del');
 const closureCompiler = require('google-closure-compiler').gulp();
 const concat = require('gulp-concat');
+const esprima = require('esprima');
 const file = require('gulp-file');
 const mergeStream = require('merge-stream');
+const rename = require('gulp-rename');
 const stripComments = require('gulp-strip-comments');
+const webpack = require('webpack');
+const gulpWebpack = require('gulp-webpack');
 
 /**
  * Convert a class name to an element name.
@@ -104,16 +111,56 @@ gulp.task('clean-tmp', () => {
 // Build the components with comments for analysis.
 // Note: HTML and CSS are not inject.
 gulp.task('build-for-analysis', () => {
-  return gulp.src(`${catalystElementsPath}/*/src/*.js`)
+  return gulp.src([`${catalystElementsPath}/*/dist/*.js`, '!**/*.min*', '!**/*.es5*', '!**/*.module*'])
     .pipe(concat(`${bundleName}-analysis.js`))
     .pipe(gulp.dest(tmpPath));
 });
 
+// Build the module version of the components.
+gulp.task('build-module', () => {
+  return gulp.src(`${srcPath}/${bundleName}.js`)
+    .pipe(stripComments())
+    .pipe(change((content) => {
+      content = content.replace(/\.\.\/node_modules\/@catalyst-elements\//g, '../../');
+
+      let parsed = esprima.parseModule(content);
+      let imports = [];
+
+      // Get all the imports
+      for (let i = 0; i < parsed.body.length; i++) {
+        if (parsed.body[i].type === 'ImportDeclaration') {
+          for (let j = 0; j < parsed.body[i].specifiers.length; j++) {
+            if (parsed.body[i].specifiers[j].type === 'ImportSpecifier') {
+              if (parsed.body[i].specifiers[j].local.type === 'Identifier') {
+                imports.push(parsed.body[i].specifiers[j].local.name);
+              }
+            }
+          }
+        }
+      }
+
+      // Export all the imports.
+      content += '\nexport { ' + imports.join(', ') + ' };'
+
+      return content;
+    }))
+    .pipe(rename({
+      basename: bundleName,
+      extname: '.module.js'
+    }))
+    .pipe(gulp.dest(distPath));
+});
+
 // Build the es6 version of the components.
 gulp.task('build-es6', () => {
-  return gulp.src([`${catalystElementsPath}/*/dist/*.js`, '!**/*.min.*', '!**/*.es5.*'])
-    .pipe(concat(`${bundleName}.js`))
-    .pipe(stripComments())
+  return gulp.src(`${srcPath}/${bundleName}.js`)
+    .pipe(gulpWebpack({
+      target: 'web'
+    }, webpack))
+    .pipe(rename({
+      basename: bundleName,
+      extname: '.js'
+    }))
     .pipe(gulp.dest(distPath));
 });
 
@@ -164,7 +211,7 @@ gulp.task('fix-demo-paths', function(){
 });
 
 // Build all the components' versions.
-gulp.task('build', gulp.series('clean-dist', 'build-es6', gulp.parallel('build-es6-min', 'build-es5-min')));
+gulp.task('build', gulp.series('clean-dist', gulp.parallel('build-module', 'build-es6'), gulp.parallel('build-es6-min', 'build-es5-min')));
 
 // Build the docs for all the components' versions.
 gulp.task('build-docs', gulp.series((done) => {
