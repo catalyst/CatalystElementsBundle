@@ -12,7 +12,7 @@ apt-get -y install jq
 yarn install
 yarn upgrade -S @catalyst-elements
 yarn run build
-
+jq ".version = \"test\"" package.json > package.tmp.json && mv package.tmp.json package.json
 # If there has been no changes.
 if [[ ! `git status --porcelain` ]]; then
   echo "No changes to commit, exiting."
