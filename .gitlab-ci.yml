@@ -2,7 +2,7 @@ stages:
   - deploy
   - pages
 
-update_docs:
+docs:
   stage: pages
   image: node:8.9.3
   script:
@@ -18,7 +18,7 @@ update_docs:
   tags:
     - docker
 
-update_elements:
+auto_release:
   stage: deploy
   image: node:8.9.3
   before_script:
