@@ -5434,8 +5434,8 @@ polymer-bundler@^3.1.1:
     source-map "^0.5.6"
 
 polymer-project-config@^3.2.1, polymer-project-config@^3.6.0:
-  version "3.8.0"
-  resolved "https://registry.yarnpkg.com/polymer-project-config/-/polymer-project-config-3.8.0.tgz#b41e255ecbbaed341af5ff38b98f31b4feb17778"
+  version "3.8.1"
+  resolved "https://registry.yarnpkg.com/polymer-project-config/-/polymer-project-config-3.8.1.tgz#7e930cf3d11fcafc0394bcf3fb0f8e828a01e06c"
   dependencies:
     "@types/node" "^6.0.41"
     jsonschema "^1.1.1"
