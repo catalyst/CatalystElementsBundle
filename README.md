@@ -34,7 +34,7 @@ Contributions are most welcome.
 
 Contribution for a particular element should be made on that element's repo.
 
-## Dependencies
+### Dependencies
 
 Project dependencies are managed through [Yarn](https://yarnpkg.com/lang/en/docs/install/) (not npm directly).
 
@@ -44,16 +44,18 @@ Install dependencies with:
 yarn install
 ```
 
-## Adding New Elements to this Bundle
+### Adding New Elements to this Bundle
 
 In the `package.json` file, add the element as a dependency.
 
 The element's key should be in the form `@catalyst-elements/element-name`.  
 (Follow the same pattern that the other elements use).
 
-The element should now automatically be included in future builds.
+In the `src/catalyst-elements.js` file, import the element with `import { Element } from ...` - Do not use `import * as ...`.
 
-### Setting Up Automatic Builds
+The element will now be included in future builds.
+
+#### Setting Up Automatic Builds
 
 When creating a new release of an element, that element can automatically trigger a new build and release of the catalyst-elements bundle.
 
@@ -80,7 +82,7 @@ update_catalyst_elements:
 
 Now whenever a new version tag is release for that element, this repo will be notified and will update accordingly.
 
-## Building the Bundle
+### Building the Bundle
 
 First ensure all dependencies are install and that the catalyst-elements are up to date.
 
@@ -95,7 +97,7 @@ Then simply run the build task.
 yarn run build
 ```
 
-## Docs
+### Docs
 
 Docs are build with [Polymer](https://www.polymer-project.org/), the [Polymer Build Tool](https://github.com/Polymer/polymer-build) and the [Polymer Analyzer](https://github.com/Polymer/polymer-analyzer).
 
