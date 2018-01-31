@@ -1,3 +1,6 @@
+
+[![pipeline status](https://gitlab.wgtn.cat-it.co.nz/CatalystElements/CatalystElements/badges/master/pipeline.svg)](https://gitlab.wgtn.cat-it.co.nz/CatalystElements/CatalystElements/commits/master)
+
 # Catalyst Elements
 
 [API documentation & Demos ↗](http://catalystelements.pages.gitlab.wgtn.cat-it.co.nz/CatalystElements/)
