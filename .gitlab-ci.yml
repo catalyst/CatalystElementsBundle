@@ -22,26 +22,20 @@ update_elements:
   stage: deploy
   image: node:8.9.3
   before_script:
-    # - apt-get update && apt-get install -y openssh-client rsync && mkdir -p ~/.ssh && echo "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
-    # - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa && chmod 0600 ~/.ssh/id_rsa && eval $(ssh-agent -s)
-    # - git config --local user.name "CatalystElements Bot"
-    # - git config --local user.email "catalystelementsbot@gitlab.wgtn.cat-it.co.nz"
-    # - git config --local push.default simple
+    # Set up ssh
+    - mkdir -pvm 0700 ~/.ssh
+    - echo "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config && chmod 0600 ~/.ssh/config
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa && chmod 0600 ~/.ssh/id_rsa
+    - ssh-keyscan -t rsa gitlab.wgtn.cat-it.co.nz > ~/.ssh/known_hosts
+    - eval $(ssh-agent -s)
 
-    - git config --local user.email $(git --no-pager show -s --format='%ae' HEAD)
-    - git config --local user.name $(git --no-pager show -s --format='%an' HEAD)
+    # Set up git
+    - git config --local --replace-all user.name "CatalystElements Bot"
+    - git config --local --replace-all user.email "<>"
     - git config --local push.default simple
     - git remote set-url --push origin $(perl -pe 's#.*@(.+?(\:\d+)?)/#git@\1:#' <<< $CI_REPOSITORY_URL)
     - git checkout $CATALYST_ELEMENTS_PIPELINE_REF
-    - git pull
-
-    - apt-get update && apt-get install -y openssh-client rsync
-    - mkdir -pvm 0700 ~/.ssh
-    - echo "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config && chmod 0400 ~/.ssh/config
-    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa && chmod 0400 ~/.ssh/id_rsa
-    - eval $(ssh-agent -s)
-
-    - echo "Change" > change.txt
+    - git reset --hard origin/$CATALYST_ELEMENTS_PIPELINE_REF
   script:
     - ./scripts/ci-update-elements.sh
   only:

@@ -12,7 +12,7 @@ apt-get -y install jq
 yarn install
 yarn upgrade -S @catalyst-elements
 yarn run build
-jq ".version = \"test\"" package.json > package.tmp.json && mv package.tmp.json package.json
+
 # If there has been no changes.
 if [[ ! `git status --porcelain` ]]; then
   echo "No changes to commit, exiting."
@@ -21,7 +21,7 @@ fi
 
 # Commit the update.
 git add .
-git commit -m "[CatalystElements Bot] - update_elements - [skip ci]"
+git commit -m "[CatalystElements Bot] - Updated Catalyst Elements."
 
 # Get latest tag.
 TAG=$(git describe --abbrev=0 --tags)
@@ -42,18 +42,23 @@ if [[ $TAG =~ $VERSION_REGEX ]]; then
   NEW_TAG="$MAJOR.$MINOR.$BUILD"
 
   # Create the tag.
-  git tag -a $NEW_TAG -m "Automatic Release - $NEW_TAG"
+  echo "Creating tag: $NEW_TAG"
+  git tag -a "$NEW_TAG" -m "Automatic Release - $NEW_TAG"
   if [[ $? -ne 0 ]]; then
-    echo "Failed to create tag: $NEW_TAG."
+    echo "Failed to create tag: $NEW_TAG"
     exit 1
   fi
 
   # Update the package.json version.
   jq ".version = \"$NEW_TAG\"" package.json > package.tmp.json && mv package.tmp.json package.json
 
+  # Commit the tag.
+  git add .
+  git commit -m "[CatalystElements Bot] - $NEW_TAG"
+
   # Push the commit and the tag.
   echo "Pushing commit and new tag."
-  git push
+  git push --follow-tags
   if [[ $? -ne 0 ]]; then
     echo "Failed to push commit and tag."
     exit 1
@@ -76,7 +81,7 @@ if [[ $TAG =~ $VERSION_REGEX ]]; then
   CODE=$(curl -X POST https://gitlab.wgtn.cat-it.co.nz/api/v4/projects/1077/repository/tags/$NEW_TAG/release --header "PRIVATE-TOKEN: $PROJECT_TOKEN" --data-urlencode "description=$(echo -e $RELEASE_NOTES)" -w "%{http_code}" -s -o /dev/null)
   if [[ $CODE != 200 ]]; then
     echo "Failed to submit release notes. Status code $CODE returned."
-    exit 1
+    # exit 1
   fi
 
 # Tag isn't a version number.
