@@ -1,9 +1,8 @@
+# Catalyst Elements
 
 [![pipeline status](https://gitlab.wgtn.cat-it.co.nz/CatalystElements/CatalystElements/badges/master/pipeline.svg)](https://gitlab.wgtn.cat-it.co.nz/CatalystElements/CatalystElements/pipelines)
 [![License](https://img.shields.io/badge/license-BSD%203%20--%20Clause-blue.svg)](LICENSE)
 [![Not published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-unpublished-red.svg)](https://gitlab.wgtn.cat-it.co.nz/CatalystElements/CatalystElements)
-
-# Catalyst Elements
 
 [API documentation & Demos ↗](http://catalystelements.pages.gitlab.wgtn.cat-it.co.nz/CatalystElements/)
 
