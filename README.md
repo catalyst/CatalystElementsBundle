@@ -7,9 +7,15 @@
 
 A collection of all the Catalyst Elements.
 
+## Installation
+
+```sh
+npm install --save "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/CatalystElements.git"
+```
+
 ## Usage
 
-Import the Catalyst Element's bundle on each page it is to be used on:
+Import the Catalyst Element's bundle on each page that uses one or more catalyst elements:
 
 ```html
 <script src="dist/catalyst-elements.js"></script>
