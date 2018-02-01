@@ -6,7 +6,7 @@ docs:
   stage: pages
   image: node:8.9.3
   script:
-    - yarn
+    - yarn install
     - yarn run analyze
     - yarn run build-docs
     - mv docs public
