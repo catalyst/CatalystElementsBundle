@@ -81,6 +81,8 @@ if [[ $TAG =~ $VERSION_REGEX ]]; then
   CODE=$(curl -X POST https://gitlab.wgtn.cat-it.co.nz/api/v4/projects/1077/repository/tags/$NEW_TAG/release --header "PRIVATE-TOKEN: $PROJECT_TOKEN" --data-urlencode "description=$(echo -e $RELEASE_NOTES)" -w "%{http_code}" -s -o /dev/null)
   if [[ $CODE != 200 ]]; then
     echo "Failed to submit release notes. Status code $CODE returned."
+    echo -e "\n\nRelease Notes:\n\n"
+    echo -e $RELEASE_NOTES
     # exit 1
   fi
 
