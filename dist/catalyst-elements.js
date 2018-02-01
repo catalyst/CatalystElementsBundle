@@ -71,11 +71,9 @@
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_catalyst_elements_catalyst_flip_button_dist_catalyst_flip_button_module_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_catalyst_elements_catalyst_toggle_button_dist_catalyst_toggle_button_module_js__ = __webpack_require__(2);
+/* eslint no-unused-vars: 0 */
 
-__WEBPACK_IMPORTED_MODULE_0__node_modules_catalyst_elements_catalyst_flip_button_dist_catalyst_flip_button_module_js__["a" /* CatalystFlipButton */].register();
 
-
-__WEBPACK_IMPORTED_MODULE_1__node_modules_catalyst_elements_catalyst_toggle_button_dist_catalyst_toggle_button_module_js__["a" /* CatalystToggleButton */].register();
 
 
 /***/ }),
@@ -83,7 +81,7 @@ __WEBPACK_IMPORTED_MODULE_1__node_modules_catalyst_elements_catalyst_toggle_butt
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CatalystFlipButton; });
+/* unused harmony export CatalystFlipButton */
 /* exported CatalystFlipButton */
 
 /**
@@ -898,7 +896,7 @@ class CatalystFlipButton extends HTMLElement {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CatalystToggleButton; });
+/* unused harmony export CatalystToggleButton */
 /* exported CatalystToggleButton */
 
 /**

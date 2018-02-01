@@ -24,6 +24,28 @@ Import the Catalyst Element's bundle on each page that uses one or more catalyst
 
 Then all included elements will be available for use - see release notes for details on which elements are included in the bundle.
 
+### Usage as a Module
+
+Import the module on each page that uses one or more catalyst elements, then register all the elements:
+
+```html
+<script type="module">
+  // Import all the Catalyst Elements.
+  import { * as CatalystElements } from 'dist/catalyst-elements.module.js';
+
+  // If not using web component polyfills or if polyfills are ready, register all the Catalyst Elements.
+  if (window.WebComponents === undefined || window.WebComponents.ready) {
+    CatalystElements.registerCatalystElements();
+  }
+  // Otherwise wait until the polyfills are ready.
+  else {
+    window.addEventListener('WebComponentsReady', () => {
+      CatalystElements.registerCatalystElements();
+    });
+  }
+</script>
+```
+
 ## Browser Compatibility
 
 See details on the wiki: [Catalyst Elements - Browser Compatibility](https://wiki.wgtn.cat-it.co.nz/wiki/Catalyst_Elements#Browser_Compatibility)
@@ -52,7 +74,6 @@ The element's key should be in the form `@catalyst-elements/element-name`.
 (Follow the same pattern that the other elements use).
 
 In the `src/catalyst-elements.js` file, import the element with `import { Element } from ...` - Do not use `import * as ...`.
-Once the element is imported, register it by calling `Element.register();`
 
 The element will now be included in future builds.
 

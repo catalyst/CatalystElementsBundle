@@ -139,8 +139,25 @@ gulp.task('build-module', () => {
         }
       }
 
-      // Export all the imports.
-      content += '\nexport { ' + imports.join(', ') + ' };'
+      // Add a comment to the top of the file.
+      content = '// Import the catalyts elements.\n' + content;
+
+      // Create a function to register all the imported elements.
+      content = content + '\n/**\n * Register all the elements in this bundle.\n */\n';
+      content = content + 'function registerCatalystElements() {\n';
+      for (let i = 0; i < imports.length; i++) {
+        content = `${content}  ${imports[i]}.register();\n`;
+      }
+      content = content + '}\n';
+
+      // The things to export.
+      let exports = [
+        'registerCatalystElements'
+      ].concat(imports);
+
+      // Export all the things.
+      content = content + '\n// Export all the catalyst elements and the `registerCatalystElements` function.\n';
+      content = content + 'export {\n  ' + exports.join(',\n  ') + '\n};\n'
 
       return content;
     }))
