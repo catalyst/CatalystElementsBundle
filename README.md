@@ -52,6 +52,7 @@ The element's key should be in the form `@catalyst-elements/element-name`.
 (Follow the same pattern that the other elements use).
 
 In the `src/catalyst-elements.js` file, import the element with `import { Element } from ...` - Do not use `import * as ...`.
+Once the element is imported, register it by calling `Element.register();`
 
 The element will now be included in future builds.
 
