@@ -32,7 +32,7 @@
 
 "@bower_components/iron-behaviors@PolymerElements/iron-behaviors#1 - 2":
   version "0.0.0"
-  resolved "https://codeload.github.com/PolymerElements/iron-behaviors/tar.gz/387422a86cdd74d15b75586f1ad133285d458189"
+  resolved "https://codeload.github.com/PolymerElements/iron-behaviors/tar.gz/d14d6d9061115d210d803c4e43124119ca94cb8f"
 
 "@bower_components/iron-checked-element-behavior@PolymerElements/iron-checked-element-behavior#1 - 2":
   version "0.0.0"
@@ -120,7 +120,7 @@
 
 "@bower_components/paper-icon-button@PolymerElements/paper-icon-button#1 - 2":
   version "0.0.0"
-  resolved "https://codeload.github.com/PolymerElements/paper-icon-button/tar.gz/89727d5251e57121ef9bf245f21e1c30d711e9ff"
+  resolved "https://codeload.github.com/PolymerElements/paper-icon-button/tar.gz/7816606a3ef5052ceade43beeb786f0836c08e68"
 
 "@bower_components/paper-ripple@PolymerElements/paper-ripple#1 - 2":
   version "0.0.0"
@@ -172,8 +172,8 @@
   resolved "https://codeload.github.com/webcomponents/webcomponentsjs/tar.gz/6d7e89a8ff2a27a8ee7077bcf984c15e597c05f4"
 
 "@catalyst-elements/catalyst-flip-button@git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-flip-button.git":
-  version "0.3.0"
-  resolved "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-flip-button.git#a29ba272db995b0ba1a79a0e693e91da29f02e1a"
+  version "0.3.1"
+  resolved "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-flip-button.git#bd3060dc9980ff24f82ab59d8870c6deecb893db"
 
 "@catalyst-elements/catalyst-toggle-button@git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-toggle-button.git":
   version "0.2.0"
@@ -349,8 +349,8 @@ acorn@^4.0.3:
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-4.0.13.tgz#105495ae5361d697bd195c825192e1ad7f253787"
 
 acorn@^5.0.0, acorn@^5.2.1:
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/acorn/-/acorn-5.3.0.tgz#7446d39459c54fb49a80e6ee6478149b940ec822"
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/acorn/-/acorn-5.4.0.tgz#51c581c9d4b1943dda59a3e73bcf02661ac727ea"
 
 ajv-keywords@^2.0.0:
   version "2.1.1"
@@ -3747,8 +3747,8 @@ polymer-analyzer@^2.0.2, polymer-analyzer@^2.3.0:
     strip-indent "^2.0.0"
 
 polymer-analyzer@^v3.0.0-pre.7:
-  version "3.0.0-pre.9"
-  resolved "https://registry.yarnpkg.com/polymer-analyzer/-/polymer-analyzer-3.0.0-pre.9.tgz#729ecc60a613d1e74d9a514808a7f6815ba41cec"
+  version "3.0.0-pre.10"
+  resolved "https://registry.yarnpkg.com/polymer-analyzer/-/polymer-analyzer-3.0.0-pre.10.tgz#f6f09dd793dd2f42289ac01da026fcaba65f198c"
   dependencies:
     "@types/babel-generator" "^6.25.1"
     "@types/babel-traverse" "^6.25.2"
