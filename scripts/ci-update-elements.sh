@@ -21,7 +21,7 @@ fi
 
 # Commit the update.
 git add .
-git commit -m "[CatalystElements Bot] [skip ci] - Updated Catalyst Elements."
+git commit -m "[CatalystElements Bot] - Updated Catalyst Elements."
 
 # Get latest tag.
 TAG=$(git describe --abbrev=0 --tags)
@@ -54,7 +54,7 @@ if [[ $TAG =~ $VERSION_REGEX ]]; then
 
   # Commit the tag.
   git add .
-  git commit -m "[CatalystElements Bot] [skip ci] - $NEW_TAG"
+  git commit -m "[CatalystElements Bot] - $NEW_TAG"
 
   # Push the commit and the tag.
   echo "Pushing commit and new tag."
