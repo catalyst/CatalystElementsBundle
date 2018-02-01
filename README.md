@@ -89,19 +89,19 @@ To set this up, configure the element's `.gitlab-ci.yml` file like so:
 stages:
   - deploy
 
-update_catalyst_elements:
+update_bundle:
   stage: deploy
-  before_script:
-    - apt-get update && apt-get install -y curl
   script:
     - VERSION_REGEX='^v?([0-9]+\.)?([0-9]+\.)?([0-9]+)$'
     - if [[ $CI_COMMIT_TAG =~ $VERSION_REGEX ]]; then
-    -   curl -X POST -F token=$CATALYST_ELEMENTS_PIPELINE_TOKEN -F ref=CATALYST_ELEMENTS_PIPELINE_REF https://gitlab.wgtn.cat-it.co.nz/api/v4/projects/1077/trigger/pipeline
+    -   apt-get update && apt-get install -y curl
+    -   curl -X POST -F token=$CATALYST_ELEMENTS_PIPELINE_TOKEN -F ref=$CATALYST_ELEMENTS_PIPELINE_REF https://gitlab.wgtn.cat-it.co.nz/api/v4/projects/1077/trigger/pipeline
     - else
     -   echo "Skipping - $CI_COMMIT_TAG is not a version tag."
     - fi
   only:
     - tags
+
 ```
 
 Now whenever a new version tag is release for that element, this repo will be notified and will update accordingly.
