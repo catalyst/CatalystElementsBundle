@@ -76,12 +76,46 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
+(() => {
+  /**
+   * Namespace for all the Catalyst Elements.
+   *
+   * @namespace CatalystElements
+   */
+  window.CatalystElements = window.CatalystElements || {};
+
+  /**
+   * Create the custom elements.
+   */
+  function registerElements() {
+    // Make the CatalystFlipButton class globally accessible under the `CatalystElements` object and register it.
+    window.CatalystElements.CatalystFlipButton = __WEBPACK_IMPORTED_MODULE_0__node_modules_catalyst_elements_catalyst_flip_button_dist_catalyst_flip_button_module_js__["a" /* CatalystFlipButton */];
+    __WEBPACK_IMPORTED_MODULE_0__node_modules_catalyst_elements_catalyst_flip_button_dist_catalyst_flip_button_module_js__["a" /* CatalystFlipButton */].register();
+
+    // Make the CatalystToggleButton class globally accessible under the `CatalystElements` object and register it.
+    window.CatalystElements.CatalystToggleButton = __WEBPACK_IMPORTED_MODULE_1__node_modules_catalyst_elements_catalyst_toggle_button_dist_catalyst_toggle_button_module_js__["a" /* CatalystToggleButton */];
+    __WEBPACK_IMPORTED_MODULE_1__node_modules_catalyst_elements_catalyst_toggle_button_dist_catalyst_toggle_button_module_js__["a" /* CatalystToggleButton */].register();
+  }
+
+
+  // If not using web component polyfills or if polyfills are ready, register the elements.
+  if (window.WebComponents === undefined || window.WebComponents.ready) {
+    registerElements();
+  }
+  // Otherwise wait until the polyfills are ready.
+  else {
+    window.addEventListener('WebComponentsReady', () => {
+      registerElements();
+    });
+  }
+})();
+
 /***/ }),
 /* 1 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* unused harmony export CatalystFlipButton */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CatalystFlipButton; });
 /* exported CatalystFlipButton */
 
 /**
@@ -896,7 +930,7 @@ class CatalystFlipButton extends HTMLElement {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* unused harmony export CatalystToggleButton */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CatalystToggleButton; });
 /* exported CatalystToggleButton */
 
 /**

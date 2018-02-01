@@ -116,28 +116,35 @@ gulp.task('build-for-analysis', () => {
     .pipe(gulp.dest(tmpPath));
 });
 
+// Get all the static imports in a JS file.
+function getStaticImports(js) {
+  let parsed = esprima.parseModule(js);
+  let imports = [];
+
+  // Get all the imports
+  for (let i = 0; i < parsed.body.length; i++) {
+    if (parsed.body[i].type === 'ImportDeclaration') {
+      for (let j = 0; j < parsed.body[i].specifiers.length; j++) {
+        if (parsed.body[i].specifiers[j].type === 'ImportSpecifier') {
+          if (parsed.body[i].specifiers[j].local.type === 'Identifier') {
+            imports.push(parsed.body[i].specifiers[j].local.name);
+          }
+        }
+      }
+    }
+  }
+
+  return imports;
+}
+
 // Build the module version of the components.
 gulp.task('build-module', () => {
   return gulp.src(`${srcPath}/${bundleName}.js`)
     .pipe(stripComments())
     .pipe(change((content) => {
+      let imports = getStaticImports(content);
+
       content = content.replace(/\.\.\/node_modules\/@catalyst-elements\//g, '../../');
-
-      let parsed = esprima.parseModule(content);
-      let imports = [];
-
-      // Get all the imports
-      for (let i = 0; i < parsed.body.length; i++) {
-        if (parsed.body[i].type === 'ImportDeclaration') {
-          for (let j = 0; j < parsed.body[i].specifiers.length; j++) {
-            if (parsed.body[i].specifiers[j].type === 'ImportSpecifier') {
-              if (parsed.body[i].specifiers[j].local.type === 'Identifier') {
-                imports.push(parsed.body[i].specifiers[j].local.name);
-              }
-            }
-          }
-        }
-      }
 
       // Add a comment to the top of the file.
       content = '// Import the catalyts elements.\n' + content;
@@ -168,9 +175,60 @@ gulp.task('build-module', () => {
     .pipe(gulp.dest(distPath));
 });
 
+// Create the file to be built into the es6 version of the components.
+gulp.task('prebuild-es6', () => {
+  return gulp.src(`${srcPath}/${bundleName}.js`)
+    .pipe(change((content) => {
+      let imports = getStaticImports(content);
+
+      let registerElements = '';
+      for (let i = 0; i < imports.length; i++) {
+        registerElements = `${registerElements}
+    // Make the ${imports[i]} class globally accessible under the \`CatalystElements\` object and register it.
+    window.CatalystElements.${imports[i]} = ${imports[i]};
+    ${imports[i]}.register();
+`
+      }
+      registerElements = registerElements.trim();
+
+      content = `${content}
+
+(() => {
+  /**
+   * Namespace for all the Catalyst Elements.
+   *
+   * @namespace CatalystElements
+   */
+  window.CatalystElements = window.CatalystElements || {};
+
+  /**
+   * Create the custom elements.
+   */
+  function registerElements() {
+    ${registerElements}
+  }
+
+
+  // If not using web component polyfills or if polyfills are ready, register the elements.
+  if (window.WebComponents === undefined || window.WebComponents.ready) {
+    registerElements();
+  }
+  // Otherwise wait until the polyfills are ready.
+  else {
+    window.addEventListener('WebComponentsReady', () => {
+      registerElements();
+    });
+  }
+})();`
+
+      return content;
+    }))
+    .pipe(gulp.dest(tmpPath));
+});
+
 // Build the es6 version of the components.
 gulp.task('build-es6', () => {
-  return gulp.src(`${srcPath}/${bundleName}.js`)
+    return gulp.src(`${tmpPath}/${bundleName}.js`)
     .pipe(webpackStream({
       target: 'web'
     }, webpack))
@@ -228,7 +286,7 @@ gulp.task('fix-demo-paths', function(){
 });
 
 // Build all the components' versions.
-gulp.task('build', gulp.series('clean-dist', gulp.parallel('build-module', 'build-es6'), gulp.parallel('build-es6-min', 'build-es5-min')));
+gulp.task('build', gulp.series('clean-dist', gulp.parallel('build-module', 'prebuild-es6'), 'build-es6', gulp.parallel('build-es6-min', 'build-es5-min'), 'clean-tmp'));
 
 // Build the docs for all the components' versions.
 gulp.task('build-docs', gulp.series((done) => {
