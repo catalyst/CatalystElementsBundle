@@ -33,7 +33,7 @@ const mergeStream = require('merge-stream');
 const rename = require('gulp-rename');
 const stripComments = require('gulp-strip-comments');
 const webpack = require('webpack');
-const gulpWebpack = require('gulp-webpack');
+const webpackStream = require('webpack-stream');
 
 /**
  * Convert a class name to an element name.
@@ -154,7 +154,7 @@ gulp.task('build-module', () => {
 // Build the es6 version of the components.
 gulp.task('build-es6', () => {
   return gulp.src(`${srcPath}/${bundleName}.js`)
-    .pipe(gulpWebpack({
+    .pipe(webpackStream({
       target: 'web'
     }, webpack))
     .pipe(rename({
