@@ -172,12 +172,12 @@
   resolved "https://codeload.github.com/webcomponents/webcomponentsjs/tar.gz/6d7e89a8ff2a27a8ee7077bcf984c15e597c05f4"
 
 "@catalyst-elements/catalyst-flip-button@git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-flip-button.git":
-  version "0.2.5"
-  resolved "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-flip-button.git#b639edbef1b68bd5574aa75e2699d38b4939f0da"
+  version "0.3.0"
+  resolved "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-flip-button.git#a29ba272db995b0ba1a79a0e693e91da29f02e1a"
 
 "@catalyst-elements/catalyst-toggle-button@git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-toggle-button.git":
-  version "0.1.2"
-  resolved "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-toggle-button.git#bf1f7aa2769745a62cc32fe98bc6cbcdbada51f8"
+  version "0.2.0"
+  resolved "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-toggle-button.git#2e1d3017d271e961526030cb0ccc811be05858eb"
 
 "@types/babel-generator@^6.25.1":
   version "6.25.1"
