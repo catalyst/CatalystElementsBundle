@@ -72,7 +72,7 @@
 
 "@bower_components/iron-iconset-svg@PolymerElements/iron-iconset-svg#1 - 2":
   version "0.0.0"
-  resolved "https://codeload.github.com/PolymerElements/iron-iconset-svg/tar.gz/791acf9d965c7b539b57589769d085a0518e2235"
+  resolved "https://codeload.github.com/PolymerElements/iron-iconset-svg/tar.gz/0f36a7d380e0edfd81344e6cdbc89519355df8bd"
 
 "@bower_components/iron-location@PolymerElements/iron-location#1 - 2":
   version "0.0.0"
@@ -173,11 +173,11 @@
 
 "@catalyst-elements/catalyst-flip-button@git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-flip-button.git":
   version "0.2.5"
-  resolved "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-flip-button.git#0a32ef552ccccb4055d52bed30b3ef90a0133422"
+  resolved "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-flip-button.git#b639edbef1b68bd5574aa75e2699d38b4939f0da"
 
 "@catalyst-elements/catalyst-toggle-button@git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-toggle-button.git":
   version "0.1.2"
-  resolved "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-toggle-button.git#04e52361c7f4ecd6ba94e7e80a6f6468e554aff3"
+  resolved "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-toggle-button.git#bf1f7aa2769745a62cc32fe98bc6cbcdbada51f8"
 
 "@types/babel-generator@^6.25.1":
   version "6.25.1"
