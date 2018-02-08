@@ -179,6 +179,10 @@
   version "0.2.0"
   resolved "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-toggle-button.git#2e1d3017d271e961526030cb0ccc811be05858eb"
 
+"@catalyst-elements/catalyst-toggle-switch@git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-toggle-switch.git":
+  version "0.0.0"
+  resolved "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-toggle-switch.git#bd538507d7bada1b2874084e96d831808114f787"
+
 "@types/babel-generator@^6.25.1":
   version "6.25.1"
   resolved "https://registry.yarnpkg.com/@types/babel-generator/-/babel-generator-6.25.1.tgz#f86ab3cf132b04597fe6c431d3083aaf1b76b530"

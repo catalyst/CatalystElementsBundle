@@ -11,7 +11,8 @@
   },
   "dependencies": {
     "@catalyst-elements/catalyst-flip-button": "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-flip-button.git",
-    "@catalyst-elements/catalyst-toggle-button": "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-toggle-button.git"
+    "@catalyst-elements/catalyst-toggle-button": "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-toggle-button.git",
+    "@catalyst-elements/catalyst-toggle-switch": "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-toggle-switch.git"
   },
   "devDependencies": {
     "@bower_components/accessibility-developer-tools": "GoogleChrome/accessibility-developer-tools#^2.10.0",
