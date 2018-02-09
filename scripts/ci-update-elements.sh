@@ -41,6 +41,13 @@ if [[ $TAG =~ $VERSION_REGEX ]]; then
   BUILD=$((${VERSION_ARR[2]} + 1))
   NEW_TAG="$MAJOR.$MINOR.$BUILD"
 
+  # Update the package.json version.
+  jq ".version = \"$NEW_TAG\"" package.json > package.tmp.json && mv package.tmp.json package.json
+
+  # Commit the tag update number.
+  git add .
+  git commit -m "[CatalystElements Bot] - $NEW_TAG"
+
   # Create the tag.
   echo "Creating tag: $NEW_TAG"
   git tag -a "$NEW_TAG" -m "Automatic Release - $NEW_TAG"
@@ -48,13 +55,6 @@ if [[ $TAG =~ $VERSION_REGEX ]]; then
     echo "Failed to create tag: $NEW_TAG"
     exit 1
   fi
-
-  # Update the package.json version.
-  jq ".version = \"$NEW_TAG\"" package.json > package.tmp.json && mv package.tmp.json package.json
-
-  # Commit the tag.
-  git add .
-  git commit -m "[CatalystElements Bot] - $NEW_TAG"
 
   # Push the commit and the tag.
   echo "Pushing commit and new tag."
