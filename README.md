@@ -31,7 +31,7 @@ Import the module on each page that uses one or more catalyst elements, then reg
 ```html
 <script type="module">
   // Import all the Catalyst Elements.
-  import { * as CatalystElements } from 'dist/catalyst-elements.module.js';
+  import * as CatalystElements from 'node_modules/@catalyst-elements/bundle/dist/catalyst-elements.module.js';
 
   // If not using web component polyfills or if polyfills are ready, register all the Catalyst Elements.
   if (window.WebComponents === undefined || window.WebComponents.ready) {
