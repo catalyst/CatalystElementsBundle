@@ -1,6 +1,6 @@
 {
   "name": "@catalyst-elements/bundle",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "A collection of all the catalyst elements.",
   "repository": "git@gitlab.wgtn.cat-it.co.nz:CatalystElements/CatalystElements.git",
   "license": "BSD-3-Clause",
