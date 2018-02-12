@@ -16,22 +16,14 @@ npm install --save "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/Ca
 
 ## Usage
 
-Import the Catalyst Element's bundle on each page that uses one or more catalyst elements:
+### As a Module (Recommend)
 
-```html
-<script src="dist/catalyst-elements.js"></script>
-```
-
-Then all included elements will be available for use - see release notes for details on which elements are included in the bundle.
-
-### Usage as a Module
-
-Import the module on each page that uses one or more catalyst elements, then register all the elements:
+Import the module on each page that uses one or more catalyst elements, then register all the elements.
 
 ```html
 <script type="module">
   // Import all the Catalyst Elements.
-  import * as CatalystElements from 'node_modules/@catalyst-elements/bundle/dist/catalyst-elements.module.js';
+  import * as CatalystElements from './node_modules/@catalyst-elements/bundle/dist/catalyst-elements.module.js';
 
   // If not using web component polyfills or if polyfills are ready, register all the Catalyst Elements.
   if (window.WebComponents === undefined || window.WebComponents.ready) {
@@ -44,6 +36,16 @@ Import the module on each page that uses one or more catalyst elements, then reg
     });
   }
 </script>
+```
+
+All included elements will now be available for use - see release notes for details on which elements are included in the bundle.
+
+### As a script
+
+Import the Catalyst Element's bundle on each page that uses one or more catalyst elements.
+
+```html
+<script src="dist/catalyst-elements.js"></script>
 ```
 
 ## Browser Compatibility
