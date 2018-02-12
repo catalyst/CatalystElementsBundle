@@ -329,7 +329,7 @@ gulp.task('build', gulp.series('clean-dist', gulp.parallel('build-module', 'preb
 
 // Build the docs for all the components' versions.
 gulp.task('build-docs', gulp.series((done) => {
-  del(`${catalystElementsPath}/*/bower_components`).then(() => {
+  del(`${catalystElementsPath}/*/node_modules`).then(() => {
     done();
   });
 }, () => {

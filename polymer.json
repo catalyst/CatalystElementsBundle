@@ -9,7 +9,8 @@
   "extraDependencies": [
     "node_modules/@webcomponents/webcomponentsjs/**/*",
     "node_modules/@webcomponents/shadycss/**/*",
-    "node_modules/@bower_components/iron-demo-helpers/**/*",
+    "node_modules/@polymer/iron-demo-helpers/demo-snippet.js",
+    "node_modules/@catalyst-elements/*/dist/**",
     "dist/**/*",
     "analysis.json"
   ],
