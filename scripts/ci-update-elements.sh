@@ -10,6 +10,11 @@ apt-get -y install jq
 
 # Install the dependencies, update the catalyst-elements and rebuild.
 yarn install
+if [[ $? -ne 0 ]]; then
+  echo "Failed to install dependencies."
+  exit 1
+fi
+
 yarn upgrade -S @catalyst-elements
 yarn run build
 
