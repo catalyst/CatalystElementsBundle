@@ -3,16 +3,16 @@
 
 
 "@catalyst-elements/catalyst-flip-button@git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-flip-button.git":
-  version "0.4.0"
-  resolved "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-flip-button.git#580e2ff8bcc339b3f484e46238638cf766e536c1"
+  version "0.4.1"
+  resolved "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-flip-button.git#7b8de2ba9d1c38d9b0929defab666bf309a87dfa"
 
 "@catalyst-elements/catalyst-toggle-button@git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-toggle-button.git":
-  version "0.3.0"
-  resolved "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-toggle-button.git#a79ce5e18e61198bef657e1fd76b077e81fb3b9d"
+  version "0.3.1"
+  resolved "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-toggle-button.git#9a41a6862024be578d1941d273196b248f17478d"
 
 "@catalyst-elements/catalyst-toggle-switch@git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-toggle-switch.git":
-  version "0.2.0"
-  resolved "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-toggle-switch.git#e47ca73d658b437b6ddae139db93a961c205b6ea"
+  version "0.2.1"
+  resolved "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-toggle-switch.git#ef47261218bc61a265085b29075814c30bd0f813"
   dependencies:
     "@catalyst-elements/catalyst-toggle-button" "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-toggle-button.git"
 
