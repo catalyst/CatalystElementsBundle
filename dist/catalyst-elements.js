@@ -70,22 +70,6 @@
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CatalystToggleButton; });
 /**
- * Get the template for this element.
- */
-function getTemplate() {
-  let template = document.createElement('template');
-  template.innerHTML = `<style>:host{display:inline-block;-webkit-box-align:start;-ms-flex-align:start;align-items:flex-start;padding:2px 7px;margin:0;font:400 13.3333px Arial;letter-spacing:normal;word-spacing:normal;color:#000;text-align:center;text-indent:0;text-rendering:auto;text-shadow:none;text-transform:none;cursor:default;background-color:#ddd;border:2px outset #ddd;-o-border-image:none;border-image:none;-o-border-image:initial;border-image:initial;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-appearance:button;-moz-appearance:button}:host([pressed]){padding:2px 6px 2px 8px;color:#000;text-shadow:.5px .5px 1px #f0f0f0;background-color:#bbb;border-color:#aaa;border-style:inset}:host([hidden]){display:none}</style><slot></slot>`;  // eslint-disable-line quotes
-
-  // If using ShadyCSS.
-  if (window.ShadyCSS !== undefined) {
-    // Rename classes as needed to ensure style scoping.
-    window.ShadyCSS.prepareTemplate(template, CatalystToggleButton.is);
-  }
-
-  return template;
-}
-
-/**
  * `<catalyst-toggle-button>` is a toggle button web component.
  *
  *     <catalyst-toggle-button>Button</catalyst-toggle-button>
@@ -109,8 +93,7 @@ function getTemplate() {
  * @memberof CatalystElements
  * @group Catalyst Elements
  * @element catalyst-toggle-button
- * @demo demo/demo.es5.html ES5 Component Demo
- * @demo demo/demo.es6.html ES6 Component Demo
+ * @demo demo/basic.html Basic
  */
 class CatalystToggleButton extends HTMLElement {
 
@@ -120,6 +103,22 @@ class CatalystToggleButton extends HTMLElement {
    */
   static get is() {
     return 'catalyst-toggle-button';
+  }
+
+  /**
+   * Get the default template used by this element.
+   */
+  static get template() {
+    let template = document.createElement('template');
+    template.innerHTML = `<style>:host{display:inline-block;-webkit-box-align:start;-ms-flex-align:start;align-items:flex-start;padding:2px 7px;margin:0;font:400 13.3333px Arial;letter-spacing:normal;word-spacing:normal;color:#000;text-align:center;text-indent:0;text-rendering:auto;text-shadow:none;text-transform:none;cursor:default;background-color:#ddd;border:2px outset #ddd;-o-border-image:none;border-image:none;-o-border-image:initial;border-image:initial;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-appearance:button;-moz-appearance:button}:host([pressed]){padding:2px 6px 2px 8px;color:#000;text-shadow:.5px .5px 1px #f0f0f0;background-color:#bbb;border-color:#aaa;border-style:inset}:host([hidden]){display:none}</style><slot></slot>`;  // eslint-disable-line quotes
+
+    // If using ShadyCSS.
+    if (window.ShadyCSS !== undefined) {
+      // Rename classes as needed to ensure style scoping.
+      window.ShadyCSS.prepareTemplate(template, CatalystToggleButton.is);
+    }
+
+    return template;
   }
 
   /**
@@ -161,7 +160,7 @@ class CatalystToggleButton extends HTMLElement {
    * @param {HTMLTemplate} [template]
    *   The template to use.
    */
-  constructor(template = getTemplate()) {
+  constructor(template = CatalystToggleButton.template) {
     super();
 
     // Create a shadow root and stamp out the template's content inside.
@@ -630,22 +629,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CatalystFlipButton; });
 /**
- * Get the template for this element.
- */
-function getTemplate() {
-  let template = document.createElement('template');
-  template.innerHTML = `<style>:host{position:relative;display:inline-block;-webkit-box-align:start;-ms-flex-align:start;align-items:flex-start;padding:1px 6px;margin:0;font-family:inherit;font-size:83.33333%;font-style:normal;font-weight:400;line-height:normal;letter-spacing:normal;word-spacing:normal;color:#000;color:ButtonText;text-align:center;text-indent:0;text-rendering:auto;text-shadow:none;text-transform:none;vertical-align:bottom;cursor:default;-webkit-box-sizing:content-box;box-sizing:content-box;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-perspective:100px;perspective:100px;contain:layout style}:host #card{position:absolute;top:0;right:0;bottom:0;left:0;-webkit-transition:-webkit-transform .4s ease;transition:-webkit-transform .4s ease;transition:transform .4s ease;transition:transform .4s ease,-webkit-transform .4s ease;-webkit-transform-style:preserve-3d;transform-style:preserve-3d}:host #card #back,:host #card #front{position:absolute;top:0;right:0;bottom:0;left:0;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;margin:0;background:#ddd;background:ButtonFace;background:var(--catalyst-flip-button-card-face-background,ButtonFace);border:2px outset ButtonFace;border:var(--catalyst-flip-button-card-face-border,2px outset ButtonFace);border-radius:var(--catalyst-flip-button-card-face-border-radius,0);-webkit-backface-visibility:hidden;backface-visibility:hidden;-webkit-appearance:var(--catalyst-flip-button-card-face-appearance,button);-moz-appearance:var(--catalyst-flip-button-card-face-appearance,button)}:host #card #back{-webkit-transform:rotateY(180deg);transform:rotateY(180deg)}:host(:focus){outline:none}:host(:focus) #card #back,:host(:focus) #card #front{outline:var(--catalyst-flip-button-card-face-focused-outline,#000 dotted 1px)}:host([hidden]),:host [hidden]{display:none}</style><div id="card"><div id="front"></div><div id="back"></div></div><div hidden><slot></slot></div>`;  // eslint-disable-line quotes
-
-  // If using ShadyCSS.
-  if (window.ShadyCSS !== undefined) {
-    // Rename classes as needed to ensure style scoping.
-    window.ShadyCSS.prepareTemplate(template, CatalystFlipButton.is);
-  }
-
-  return template;
-}
-
-/**
  * `<catalyst-flip-button>` is a wrapper for a `<select>` element.
  * It displays as a button and flips between different options.
  *
@@ -681,8 +664,9 @@ function getTemplate() {
  * @memberof CatalystElements
  * @group Catalyst Elements
  * @element catalyst-flip-button
- * @demo demo/demo.es5.html ES5 Component Demo
- * @demo demo/demo.es6.html ES6 Component Demo
+ * @demo demo/basic.html Basic
+ * @demo demo/styled.html Styled
+ * @demo demo/form.html Form
  */
 class CatalystFlipButton extends HTMLElement {
 
@@ -692,6 +676,22 @@ class CatalystFlipButton extends HTMLElement {
    */
   static get is() {
     return 'catalyst-flip-button';
+  }
+
+  /**
+   * Get the default template used by this element.
+   */
+  static get template() {
+    let template = document.createElement('template');
+    template.innerHTML = `<style>:host{position:relative;display:inline-block;-webkit-box-align:start;-ms-flex-align:start;align-items:flex-start;padding:1px 6px;margin:0;font-family:inherit;font-size:83.33333%;font-style:normal;font-weight:400;line-height:normal;letter-spacing:normal;word-spacing:normal;color:#000;color:ButtonText;text-align:center;text-indent:0;text-rendering:auto;text-shadow:none;text-transform:none;vertical-align:bottom;cursor:default;-webkit-box-sizing:content-box;box-sizing:content-box;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-perspective:100px;perspective:100px;contain:layout style}:host #card{position:absolute;top:0;right:0;bottom:0;left:0;-webkit-transition:-webkit-transform .4s ease;transition:-webkit-transform .4s ease;transition:transform .4s ease;transition:transform .4s ease,-webkit-transform .4s ease;-webkit-transform-style:preserve-3d;transform-style:preserve-3d}:host #card #back,:host #card #front{position:absolute;top:0;right:0;bottom:0;left:0;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;margin:0;background:#ddd;background:ButtonFace;background:var(--catalyst-flip-button-card-face-background,ButtonFace);border:2px outset ButtonFace;border:var(--catalyst-flip-button-card-face-border,2px outset ButtonFace);border-radius:var(--catalyst-flip-button-card-face-border-radius,0);-webkit-backface-visibility:hidden;backface-visibility:hidden;-webkit-appearance:var(--catalyst-flip-button-card-face-appearance,button);-moz-appearance:var(--catalyst-flip-button-card-face-appearance,button)}:host #card #back{-webkit-transform:rotateY(180deg);transform:rotateY(180deg)}:host(:focus){outline:none}:host(:focus) #card #back,:host(:focus) #card #front{outline:var(--catalyst-flip-button-card-face-focused-outline,#000 dotted 1px)}:host([hidden]),:host [hidden]{display:none}</style><div id="card"><div id="front"></div><div id="back"></div></div><div hidden><slot></slot></div>`;  // eslint-disable-line quotes
+
+    // If using ShadyCSS.
+    if (window.ShadyCSS !== undefined) {
+      // Rename classes as needed to ensure style scoping.
+      window.ShadyCSS.prepareTemplate(template, CatalystFlipButton.is);
+    }
+
+    return template;
   }
 
   /**
@@ -744,7 +744,7 @@ class CatalystFlipButton extends HTMLElement {
    * @param {HTMLTemplate} [template]
    *   The template to use.
    */
-  constructor(template = getTemplate()) {
+  constructor(template = CatalystFlipButton.template) {
     super();
 
     // Create a shadow root and stamp out the template's content inside.
@@ -1440,22 +1440,6 @@ class CatalystFlipButton extends HTMLElement {
 
 
 /**
- * Get the template for this element.
- */
-function getTemplate() {
-  let template = document.createElement('template');
-  template.innerHTML = `<style>:host{position:relative;display:inline-block;width:54px;width:calc(var(--catalyst-toggle-switch-bar-width, 44px) + 2 * var(--catalyst-toggle-switch-knob-offset, 5px));height:26px;height:calc(var(--catalyst-toggle-switch-bar-height, 16px) + 2 * var(--catalyst-toggle-switch-knob-offset, 5px));min-width:var(--catalyst-toggle-switch-bar-width,44px);min-height:var(--catalyst-toggle-switch-bar-height,16px);margin:0 8px;vertical-align:middle}#bar{position:absolute;top:5px;top:var(--catalyst-toggle-switch-knob-offset,5px);left:5px;left:var(--catalyst-toggle-switch-knob-offset,5px);width:44px;width:var(--catalyst-toggle-switch-bar-width,44px);height:16px;height:var(--catalyst-toggle-switch-bar-height,16px);cursor:pointer;background-color:#ced4da;background-color:var(--catalyst-toggle-switch-bar-color,#ced4da);border:none;border:var(--catalyst-toggle-switch-bar-border,none);border-radius:8px;border-radius:calc(var(--catalyst-toggle-switch-bar-height, 16px) / 2);-webkit-box-sizing:border-box;box-sizing:border-box;-webkit-transition:background-color .3s ease,border .3s ease;transition:background-color .3s ease,border .3s ease;will-change:background-color,border}#bar.negitive-knob-offset{top:0;left:0}#knob{position:absolute;top:-5px;top:calc(0px - var(--catalyst-toggle-switch-knob-offset, 5px));left:-5px;left:calc(0px - var(--catalyst-toggle-switch-knob-offset, 5px));width:26px;width:var(--catalyst-toggle-switch-knob-size,26px);height:26px;height:var(--catalyst-toggle-switch-knob-size,26px);background-color:#fff;background-color:var(--catalyst-toggle-switch-knob-color,#fff);border:none;border:var(--catalyst-toggle-switch-knob-border,none);border-radius:13px;border-radius:calc(var(--catalyst-toggle-switch-knob-size, 26px) / 2);-webkit-box-shadow:0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12),0 3px 1px -2px rgba(0,0,0,.2);box-shadow:0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12),0 3px 1px -2px rgba(0,0,0,.2);-webkit-box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12),0 3px 1px -2px rgba(0,0,0,.2));box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12),0 3px 1px -2px rgba(0,0,0,.2));-webkit-box-sizing:border-box;box-sizing:border-box;-webkit-transition:background-color .3s ease,border .3s ease,-webkit-transform .3s ease,-webkit-box-shadow .28s cubic-bezier(.4,0,.2,1);transition:background-color .3s ease,border .3s ease,-webkit-transform .3s ease,-webkit-box-shadow .28s cubic-bezier(.4,0,.2,1);transition:background-color .3s ease,border .3s ease,transform .3s ease,box-shadow .28s cubic-bezier(.4,0,.2,1);transition:background-color .3s ease,border .3s ease,transform .3s ease,box-shadow .28s cubic-bezier(.4,0,.2,1),-webkit-transform .3s ease,-webkit-box-shadow .28s cubic-bezier(.4,0,.2,1);will-change:background-color,border,transform,box-shadow}#knob:hover{-webkit-box-shadow:0 3px 4px 0 rgba(0,0,0,.14),0 1px 8px 0 rgba(0,0,0,.12),0 3px 3px -2px rgba(0,0,0,.4);box-shadow:0 3px 4px 0 rgba(0,0,0,.14),0 1px 8px 0 rgba(0,0,0,.12),0 3px 3px -2px rgba(0,0,0,.4);-webkit-box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 3px 4px 0 rgba(0,0,0,.14),0 1px 8px 0 rgba(0,0,0,.12),0 3px 3px -2px rgba(0,0,0,.4));box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 3px 4px 0 rgba(0,0,0,.14),0 1px 8px 0 rgba(0,0,0,.12),0 3px 3px -2px rgba(0,0,0,.4))}:host([checked]) #knob{-webkit-transform:translateX(28px);transform:translateX(28px);-webkit-transform:translateX(calc(var(--catalyst-toggle-switch-bar-width, 44px) + 2 * var(--catalyst-toggle-switch-knob-offset, 5px) - var(--catalyst-toggle-switch-knob-size, 26px) + var(--catalyst-toggle-switch-knob-slide-dist-adjust, 0px)));transform:translateX(calc(var(--catalyst-toggle-switch-bar-width, 44px) + 2 * var(--catalyst-toggle-switch-knob-offset, 5px) - var(--catalyst-toggle-switch-knob-size, 26px) + var(--catalyst-toggle-switch-knob-slide-dist-adjust, 0px)))}:host([disabled]) #bar{background-color:#f1f3f5;background-color:var(--catalyst-toggle-switch-bar-color,#f1f3f5)}:host([disabled]) #knob{background-color:#ced4da;background-color:var(--catalyst-toggle-switch-knob-color,#f1f3f5);-webkit-box-shadow:0 2px 2px 0 rgba(0,0,0,.07),0 1px 5px 0 rgba(0,0,0,.06),0 3px 1px -2px rgba(0,0,0,.1);box-shadow:0 2px 2px 0 rgba(0,0,0,.07),0 1px 5px 0 rgba(0,0,0,.06),0 3px 1px -2px rgba(0,0,0,.1);-webkit-box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 2px 2px 0 rgba(0,0,0,.07),0 1px 5px 0 rgba(0,0,0,.06),0 3px 1px -2px rgba(0,0,0,.1));box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 2px 2px 0 rgba(0,0,0,.07),0 1px 5px 0 rgba(0,0,0,.06),0 3px 1px -2px rgba(0,0,0,.1))}:host(:focus){outline:none}:host(:focus) #knob{-webkit-box-shadow:0 6px 10px 0 rgba(0,0,0,.14),0 1px 18px 0 rgba(0,0,0,.12),0 3px 5px -1px rgba(0,0,0,.4);box-shadow:0 6px 10px 0 rgba(0,0,0,.14),0 1px 18px 0 rgba(0,0,0,.12),0 3px 5px -1px rgba(0,0,0,.4);-webkit-box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 6px 10px 0 rgba(0,0,0,.14),0 1px 18px 0 rgba(0,0,0,.12),0 3px 5px -1px rgba(0,0,0,.4));box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 6px 10px 0 rgba(0,0,0,.14),0 1px 18px 0 rgba(0,0,0,.12),0 3px 5px -1px rgba(0,0,0,.4))}:host([hidden]){display:none}</style><div id="bar"><div id="knob"></div></div>`;  // eslint-disable-line quotes
-
-  // If using ShadyCSS.
-  if (window.ShadyCSS !== undefined) {
-    // Rename classes as needed to ensure style scoping.
-    window.ShadyCSS.prepareTemplate(template, CatalystToggleSwitch.is);
-  }
-
-  return template;
-}
-
-/**
  * `<catalyst-toggle-switch>` is a toggle switch web component.
  *
  *     <catalyst-toggle-switch></catalyst-toggle-switch>
@@ -1491,8 +1475,9 @@ function getTemplate() {
  * @memberof CatalystElements
  * @group Catalyst Elements
  * @element catalyst-toggle-switch
- * @demo demo/demo.es5.html ES5 Component Demo
- * @demo demo/demo.es6.html ES6 Component Demo
+ * @demo demo/basic.html Basic
+ * @demo demo/styled.html Styled
+ * @demo demo/alternative-style.html Alternative Style
  */
 class CatalystToggleSwitch extends __WEBPACK_IMPORTED_MODULE_0__catalyst_toggle_button_dist_catalyst_toggle_button_module_js__["a" /* CatalystToggleButton */] {
 
@@ -1502,6 +1487,22 @@ class CatalystToggleSwitch extends __WEBPACK_IMPORTED_MODULE_0__catalyst_toggle_
    */
   static get is() {
     return 'catalyst-toggle-switch';
+  }
+
+  /**
+   * Get the default template used by this element.
+   */
+  static get template() {
+    let template = document.createElement('template');
+    template.innerHTML = `<style>:host{position:relative;display:inline-block;width:54px;width:calc(var(--catalyst-toggle-switch-bar-width, 44px) + 2 * var(--catalyst-toggle-switch-knob-offset, 5px));height:26px;height:calc(var(--catalyst-toggle-switch-bar-height, 16px) + 2 * var(--catalyst-toggle-switch-knob-offset, 5px));min-width:var(--catalyst-toggle-switch-bar-width,44px);min-height:var(--catalyst-toggle-switch-bar-height,16px);margin:0 8px;vertical-align:middle}#bar{position:absolute;top:5px;top:var(--catalyst-toggle-switch-knob-offset,5px);left:5px;left:var(--catalyst-toggle-switch-knob-offset,5px);width:44px;width:var(--catalyst-toggle-switch-bar-width,44px);height:16px;height:var(--catalyst-toggle-switch-bar-height,16px);cursor:pointer;background-color:#ced4da;background-color:var(--catalyst-toggle-switch-bar-color,#ced4da);border:none;border:var(--catalyst-toggle-switch-bar-border,none);border-radius:8px;border-radius:calc(var(--catalyst-toggle-switch-bar-height, 16px) / 2);-webkit-box-sizing:border-box;box-sizing:border-box;-webkit-transition:background-color .3s ease,border .3s ease;transition:background-color .3s ease,border .3s ease;will-change:background-color,border}#bar.negitive-knob-offset{top:0;left:0}#knob{position:absolute;top:-5px;top:calc(0px - var(--catalyst-toggle-switch-knob-offset, 5px));left:-5px;left:calc(0px - var(--catalyst-toggle-switch-knob-offset, 5px));width:26px;width:var(--catalyst-toggle-switch-knob-size,26px);height:26px;height:var(--catalyst-toggle-switch-knob-size,26px);background-color:#fff;background-color:var(--catalyst-toggle-switch-knob-color,#fff);border:none;border:var(--catalyst-toggle-switch-knob-border,none);border-radius:13px;border-radius:calc(var(--catalyst-toggle-switch-knob-size, 26px) / 2);-webkit-box-shadow:0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12),0 3px 1px -2px rgba(0,0,0,.2);box-shadow:0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12),0 3px 1px -2px rgba(0,0,0,.2);-webkit-box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12),0 3px 1px -2px rgba(0,0,0,.2));box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12),0 3px 1px -2px rgba(0,0,0,.2));-webkit-box-sizing:border-box;box-sizing:border-box;-webkit-transition:background-color .3s ease,border .3s ease,-webkit-transform .3s ease,-webkit-box-shadow .28s cubic-bezier(.4,0,.2,1);transition:background-color .3s ease,border .3s ease,-webkit-transform .3s ease,-webkit-box-shadow .28s cubic-bezier(.4,0,.2,1);transition:background-color .3s ease,border .3s ease,transform .3s ease,box-shadow .28s cubic-bezier(.4,0,.2,1);transition:background-color .3s ease,border .3s ease,transform .3s ease,box-shadow .28s cubic-bezier(.4,0,.2,1),-webkit-transform .3s ease,-webkit-box-shadow .28s cubic-bezier(.4,0,.2,1);will-change:background-color,border,transform,box-shadow}#knob:hover{-webkit-box-shadow:0 3px 4px 0 rgba(0,0,0,.14),0 1px 8px 0 rgba(0,0,0,.12),0 3px 3px -2px rgba(0,0,0,.4);box-shadow:0 3px 4px 0 rgba(0,0,0,.14),0 1px 8px 0 rgba(0,0,0,.12),0 3px 3px -2px rgba(0,0,0,.4);-webkit-box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 3px 4px 0 rgba(0,0,0,.14),0 1px 8px 0 rgba(0,0,0,.12),0 3px 3px -2px rgba(0,0,0,.4));box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 3px 4px 0 rgba(0,0,0,.14),0 1px 8px 0 rgba(0,0,0,.12),0 3px 3px -2px rgba(0,0,0,.4))}:host([checked]) #knob{-webkit-transform:translateX(28px);transform:translateX(28px);-webkit-transform:translateX(calc(var(--catalyst-toggle-switch-bar-width, 44px) + 2 * var(--catalyst-toggle-switch-knob-offset, 5px) - var(--catalyst-toggle-switch-knob-size, 26px) + var(--catalyst-toggle-switch-knob-slide-dist-adjust, 0px)));transform:translateX(calc(var(--catalyst-toggle-switch-bar-width, 44px) + 2 * var(--catalyst-toggle-switch-knob-offset, 5px) - var(--catalyst-toggle-switch-knob-size, 26px) + var(--catalyst-toggle-switch-knob-slide-dist-adjust, 0px)))}:host([disabled]) #bar{background-color:#f1f3f5;background-color:var(--catalyst-toggle-switch-bar-color,#f1f3f5)}:host([disabled]) #knob{background-color:#ced4da;background-color:var(--catalyst-toggle-switch-knob-color,#f1f3f5);-webkit-box-shadow:0 2px 2px 0 rgba(0,0,0,.07),0 1px 5px 0 rgba(0,0,0,.06),0 3px 1px -2px rgba(0,0,0,.1);box-shadow:0 2px 2px 0 rgba(0,0,0,.07),0 1px 5px 0 rgba(0,0,0,.06),0 3px 1px -2px rgba(0,0,0,.1);-webkit-box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 2px 2px 0 rgba(0,0,0,.07),0 1px 5px 0 rgba(0,0,0,.06),0 3px 1px -2px rgba(0,0,0,.1));box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 2px 2px 0 rgba(0,0,0,.07),0 1px 5px 0 rgba(0,0,0,.06),0 3px 1px -2px rgba(0,0,0,.1))}:host(:focus){outline:none}:host(:focus) #knob{-webkit-box-shadow:0 6px 10px 0 rgba(0,0,0,.14),0 1px 18px 0 rgba(0,0,0,.12),0 3px 5px -1px rgba(0,0,0,.4);box-shadow:0 6px 10px 0 rgba(0,0,0,.14),0 1px 18px 0 rgba(0,0,0,.12),0 3px 5px -1px rgba(0,0,0,.4);-webkit-box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 6px 10px 0 rgba(0,0,0,.14),0 1px 18px 0 rgba(0,0,0,.12),0 3px 5px -1px rgba(0,0,0,.4));box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 6px 10px 0 rgba(0,0,0,.14),0 1px 18px 0 rgba(0,0,0,.12),0 3px 5px -1px rgba(0,0,0,.4))}:host([hidden]){display:none}</style><div id="bar"><div id="knob"></div></div>`;  // eslint-disable-line quotes
+
+    // If using ShadyCSS.
+    if (window.ShadyCSS !== undefined) {
+      // Rename classes as needed to ensure style scoping.
+      window.ShadyCSS.prepareTemplate(template, CatalystToggleSwitch.is);
+    }
+
+    return template;
   }
 
   /**
@@ -1517,7 +1518,7 @@ class CatalystToggleSwitch extends __WEBPACK_IMPORTED_MODULE_0__catalyst_toggle_
    * @param {HTMLTemplate} [template]
    *   The template to use.
    */
-  constructor(template = getTemplate()) {
+  constructor(template = CatalystToggleSwitch.template) {
     super(template);
 
     /**
