@@ -10,8 +10,16 @@ A collection of all the Catalyst Elements.
 
 ## Installation
 
+Install with npm:
+
 ```sh
 npm install --save "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/CatalystElements.git"
+```
+
+Install with yarn:
+
+```sh
+yarn add "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/CatalystElements.git"
 ```
 
 ## Usage
@@ -62,12 +70,12 @@ Contribution for a particular element should be made on that element's repo.
 
 ### Dependencies
 
-Project dependencies are managed through [Yarn](https://yarnpkg.com/lang/en/docs/install/) (not npm directly).
+Project dependencies are managed through [Yarn](https://yarnpkg.com/lang/en/docs/install/).
 
 Install dependencies with:
 
 ```sh
-yarn install
+yarn
 ```
 
 ### Adding New Elements to this Bundle
@@ -113,7 +121,7 @@ Now whenever a new version tag is release for that element, this repo will be no
 First ensure all dependencies are install and that the catalyst-elements are up to date.
 
 ```sh
-yarn install
+yarn
 yarn upgrade -S @catalyst-elements
 ```
 
