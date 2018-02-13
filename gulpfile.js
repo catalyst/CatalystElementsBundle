@@ -7,6 +7,9 @@ const distPath = './dist';
 // Path to output tmp files.
 const tmpPath = './tmp';
 
+// Path to output the docs too.
+const docsPath = './docs';
+
 // Path to the CatalystElements.
 const catalystElementsPath = './node_modules/@catalyst-elements'
 
@@ -21,16 +24,16 @@ const gulp = require('gulp');
 const {Analyzer, generateAnalysis} = require('polymer-analyzer');
 const analyzer = Analyzer.createForDirectory('./');
 const Builder = require('polymer-build').PolymerProject;
-const docBuilder = new Builder(require('./polymer.json'));
-const clean = require('gulp-clean');
 const del = require('del');
 const closureCompiler = require('google-closure-compiler').gulp();
 const concat = require('gulp-concat');
 const escodegen = require('escodegen');
 const esprima = require('esprima');
 const file = require('gulp-file');
+const foreach = require('gulp-foreach');
 const mergeStream = require('merge-stream');
 const modifyFile = require('gulp-modify-file');
+const path = require('path');
 const rename = require('gulp-rename');
 const stripComments = require('gulp-strip-comments');
 const webpack = require('webpack');
@@ -99,23 +102,36 @@ function fixAnalysis(analysis) {
   return analysis;
 }
 
-// Clean the dist path.
-gulp.task('clean-dist', () => {
-  return gulp.src(distPath, {read: false, allowEmpty: true}).pipe(clean());
-});
+// Workaround for: https://github.com/google/closure-compiler/issues/2182
+function adjustWebpackBuildForClosureCompiler() {
+  return modifyFile((content) => {
+    let parsed = esprima.parseModule(content, {}, (node) => {
+      if (Array.isArray(node.body)) {
+        let toInsert = {};
+        for (let i = 0; i < node.body.length; i++) {
+          if (node.body[i].type === 'ClassDeclaration') {
+            // Extends webpack module?
+            if (node.body[i].superClass !== null && node.body[i].superClass.type === 'MemberExpression' && node.body[i].superClass.object && node.body[i].superClass.object.name.startsWith('__WEBPACK_IMPORTED_MODULE_')) {
+              let workaroundVarName = `workaround_var${node.body[i].superClass.object.name}`;
+              toInsert[i] = esprima.parseScript(`let ${workaroundVarName} = ${node.body[i].superClass.object.name}[${node.body[i].superClass.property.raw}];`);
 
-// Clean the tmp path.
-gulp.task('clean-tmp', () => {
-  return gulp.src(tmpPath, {read: false, allowEmpty: true}).pipe(clean());
-});
+              node.body[i].superClass = {
+                type: 'Identifier',
+                name: workaroundVarName
+              };
+            }
+          }
+        }
+        for (let i in toInsert) {
+          node.body.splice(i, 0, toInsert[i]);
+        }
+      }
+    });
+    content = escodegen.generate(parsed);
 
-// Build the components with comments for analysis.
-// Note: HTML and CSS are not inject.
-gulp.task('build-for-analysis', () => {
-  return gulp.src([`${catalystElementsPath}/*/dist/*.js`, '!**/*.min*', '!**/*.es5*', '!**/*.module*'])
-    .pipe(concat(`${bundleName}-analysis.js`))
-    .pipe(gulp.dest(tmpPath));
-});
+    return content;
+  });
+}
 
 // Get all the static imports in a JS file.
 function getStaticImports(js) {
@@ -137,6 +153,34 @@ function getStaticImports(js) {
 
   return imports;
 }
+
+// Clean the dist path.
+gulp.task('clean-dist', (done) => {
+  del(distPath).then(() => { done(); });
+});
+
+// Clean the tmp path.
+gulp.task('clean-tmp', (done) => {
+  del(tmpPath).then(() => { done(); });
+});
+
+// Clean the docs path.
+gulp.task('clean-docs', (done) => {
+  del(docsPath).then(() => { done(); });
+});
+
+// Remove `node_modules` folder in catalyst elements.
+gulp.task('clean-elements', (done) => {
+  del(`${catalystElementsPath}/*/node_modules`).then(() => { done(); });
+});
+
+// Build the components with comments for analysis.
+// Note: HTML and CSS are not inject.
+gulp.task('build-for-analysis', () => {
+  return gulp.src([`${catalystElementsPath}/*/dist/*.js`, '!**/*.min*', '!**/*.es5*', '!**/*.module*'])
+    .pipe(concat(`${bundleName}-analysis.js`))
+    .pipe(gulp.dest(tmpPath));
+});
 
 // Build the module version of the components.
 gulp.task('build-module', () => {
@@ -240,47 +284,10 @@ gulp.task('build-es6', () => {
     .pipe(gulp.dest(distPath));
 });
 
-// Get the code ready to be minified.
-// Workaround for: https://github.com/google/closure-compiler/issues/2182
-gulp.task('prebuild-min', () => {
-  return gulp.src(`${distPath}/${bundleName}.js`)
-  .pipe(modifyFile((content) => {
-    let parsed = esprima.parseModule(content, {}, (node) => {
-      if (Array.isArray(node.body)) {
-        let toInsert = {};
-        for (let i = 0; i < node.body.length; i++) {
-          if (node.body[i].type === 'ClassDeclaration') {
-            // Extends webpack module?
-            if (node.body[i].superClass !== null && node.body[i].superClass.type === 'MemberExpression' && node.body[i].superClass.object && node.body[i].superClass.object.name.startsWith('__WEBPACK_IMPORTED_MODULE_')) {
-              let workaroundVarName = `workaround_var${node.body[i].superClass.object.name}`;
-              toInsert[i] = esprima.parseScript(`let ${workaroundVarName} = ${node.body[i].superClass.object.name}[${node.body[i].superClass.property.raw}];`);
-
-              node.body[i].superClass = {
-                type: 'Identifier',
-                name: workaroundVarName
-              };
-            }
-          }
-        }
-        for (let i in toInsert) {
-          node.body.splice(i, 0, toInsert[i]);
-        }
-      }
-    });
-    content = escodegen.generate(parsed);
-
-    return content;
-  }))
-  .pipe(rename({
-    basename: bundleName,
-    extname: '.premin.js'
-  }))
-  .pipe(gulp.dest(tmpPath));
-});
-
 // Build the minified es6 version of the components.
 gulp.task('build-es6-min', () => {
-  return gulp.src(`${tmpPath}/${bundleName}.premin.js`)
+  return gulp.src(`${distPath}/${bundleName}.js`)
+    .pipe(adjustWebpackBuildForClosureCompiler())
     .pipe(closureCompiler({
       compilation_level: 'SIMPLE_OPTIMIZATIONS',
       warning_level: 'QUIET',
@@ -294,7 +301,8 @@ gulp.task('build-es6-min', () => {
 
 // Build the minified es5 version of the components.
 gulp.task('build-es5-min', () => {
-  return gulp.src(`${tmpPath}/${bundleName}.premin.js`)
+  return gulp.src(`${distPath}/${bundleName}.js`)
+    .pipe(adjustWebpackBuildForClosureCompiler())
     .pipe(closureCompiler({
       compilation_level: 'SIMPLE_OPTIMIZATIONS',
       warning_level: 'QUIET',
@@ -315,27 +323,113 @@ gulp.task('create-analysis', () => {
   });
 });
 
-// Fix import paths that the demos use.
-gulp.task('fix-demo-paths', function(){
-  return gulp.src(`docs/${catalystElementsPath}/*/demo/**/*.html`)
+// Clone all the dependencies needed for docs.
+gulp.task('docs-clone-dependencies', () => {
+  return gulp.src([
+    'node_modules/**',
+    'index.html'
+  ], { follow: true, base: './' }).pipe(gulp.dest(`${tmpPath}`));
+});
+
+// Fix links for the docs.
+gulp.task('docs-fix-links', () => {
+  return gulp.src(`${tmpPath}/${catalystElementsPath}/*/demo/**/*[.html|.js]`, { base: tmpPath })
     .pipe(modifyFile((content) => {
       return content.replace(/\.\.\/node_modules\//g, '../../../');
     }))
-    .pipe(gulp.dest(`docs/${catalystElementsPath}`));
+    .pipe(gulp.dest(tmpPath));
 });
 
-// Build all the components' versions.
-gulp.task('build', gulp.series('clean-dist', gulp.parallel('build-module', 'prebuild-es6'), 'build-es6', 'prebuild-min', gulp.parallel('build-es6-min', 'build-es5-min'), 'clean-tmp'));
+// Build the iron-component-page.
+gulp.task('docs-build-iron-component-page', () => {
+  return gulp.src(`${tmpPath}/node_modules/@polymer/iron-component-page/iron-component-page.js`, { base: tmpPath })
+    .pipe(webpackStream({
+      target: 'web'
+    }, webpack))
+    .pipe(adjustWebpackBuildForClosureCompiler())
+    .pipe(closureCompiler({
+      compilation_level: 'SIMPLE_OPTIMIZATIONS',
+      warning_level: 'QUIET',
+      language_in: 'ECMASCRIPT6_STRICT',
+      language_out: 'ECMASCRIPT6_STRICT'
+    }))
+    .pipe(rename({
+      basename: 'iron-component-page',
+      extname: '.build.js'
+    }))
+    .pipe(gulp.dest(`${tmpPath}`));
+});
 
-// Build the docs for all the components' versions.
-gulp.task('build-docs', gulp.series((done) => {
-  del(`${catalystElementsPath}/*/node_modules`).then(() => {
+// Build the imports for each demo.
+gulp.task('docs-build-demo-imports', () => {
+  return gulp.src(`${tmpPath}/${catalystElementsPath}/*/demo/import.js`)
+    .pipe(foreach(function(stream, file) {
+      return stream
+      .pipe(webpackStream({
+        target: 'web'
+      }, webpack))
+      .pipe(adjustWebpackBuildForClosureCompiler())
+      .pipe(closureCompiler({
+        compilation_level: 'SIMPLE_OPTIMIZATIONS',
+        warning_level: 'QUIET',
+        language_in: 'ECMASCRIPT6_STRICT',
+        language_out: 'ECMASCRIPT6_STRICT'
+      }))
+      .pipe(rename({
+        basename: 'import',
+        extname: '.build.js'
+      }))
+      .pipe(gulp.dest(path.dirname(file.path)));
+    }));
+});
+
+// Update the imports in the index.
+gulp.task('docs-update-index-imports', () => {
+  return gulp.src(`${tmpPath}/index.html`)
+    .pipe(modifyFile((content) => {
+      return content.replace(new RegExp('<script src="node_modules/@polymer/iron-component-page/iron-component-page.js" type="module"></script>'), '<script src="iron-component-page.build.js"></script>');
+    }))
+    .pipe(gulp.dest(tmpPath));
+});
+
+// Update the imports in the demos.
+gulp.task('docs-update-demo-imports', () => {
+  return gulp.src(`${tmpPath}/${catalystElementsPath}/*/demo/*.html`, { base: tmpPath })
+    .pipe(modifyFile((content) => {
+      return content.replace(new RegExp('<script src="import.js" type="module"></script>'), '<script src="../../../marked/marked.min.js"></script><script src="import.build.js"></script>');
+    }))
+    .pipe(gulp.dest(tmpPath));
+});
+
+// Generate the docs.
+gulp.task('docs-generate', gulp.series(() => {
+  const docBuilder = new Builder(require('./polymer.json'));
+  return mergeStream(docBuilder.sources(), docBuilder.dependencies())
+    .pipe(gulp.dest(docsPath));
+}, () => {
+  return gulp.src(`${docsPath}/${tmpPath}/**`)
+    .pipe(gulp.dest(docsPath));
+}, (done) => {
+  del(`${docsPath}/${tmpPath}/`).then(() => {
     done();
   });
-}, () => {
-  return mergeStream(docBuilder.sources(), docBuilder.dependencies())
-    .pipe(gulp.dest('docs'));
-}, 'fix-demo-paths'));
+}));
+
+// Build all the components' versions.
+gulp.task('build', gulp.series('clean-dist', gulp.parallel('build-module', 'prebuild-es6'), 'build-es6', gulp.parallel('build-es6-min', 'build-es5-min'), 'clean-tmp'));
+
+// Build the docs for all the components' versions.
+gulp.task('build-docs', gulp.series(
+  'clean-docs',
+  'clean-elements',
+  'docs-clone-dependencies',
+  'docs-fix-links',
+  'docs-build-iron-component-page',
+  'docs-build-demo-imports',
+  'docs-update-index-imports',
+  'docs-update-demo-imports',
+  'docs-generate',
+  'clean-tmp'));
 
 // Analyze all the components.
 gulp.task('analyze', gulp.series('build-for-analysis', 'create-analysis', 'clean-tmp'));
