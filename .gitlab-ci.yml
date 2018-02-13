@@ -2,7 +2,7 @@ stages:
   - deploy
   - pages
 
-docs:
+pages:
   stage: pages
   image: node:8.9.3
   before_script:
