@@ -340,17 +340,17 @@ gulp.task('docs-clone-dependencies', gulp.series(() => {
 
 // Fix links for the docs.
 gulp.task('docs-fix-links', gulp.series(() => {
-  return gulp.src(`${tmpPath}/dependencies/@catalyst-elements/*/demo/**/*[.html|.js]`, { base: tmpPath })
+  return gulp.src(`${tmpPath}/dependencies/@catalyst-elements/*/demo/**/*[.html|.js]`, { base: './' })
     .pipe(modifyFile((content) => {
       return content.replace(/\.\.\/node_modules\//g, '../../../');
     }))
-    .pipe(gulp.dest(tmpPath));
+    .pipe(gulp.dest('./'));
 }, () => {
-  return gulp.src([`${tmpPath}/**/*[.html|.js|.json]`, `!${tmpPath}/dependencies/**`], { base: tmpPath })
+  return gulp.src([`${tmpPath}/**/*[.html|.js|.json]`, `!${tmpPath}/dependencies/**`], { base: './' })
     .pipe(modifyFile((content) => {
       return content.replace(/node_modules/g, 'dependencies');
     }))
-    .pipe(gulp.dest(tmpPath));
+    .pipe(gulp.dest('./'));
 }));
 
 // Build the docs imports.
@@ -412,20 +412,20 @@ gulp.task('docs-build-demo-imports', () => {
 
 // Update the imports in the index.
 gulp.task('docs-update-index-imports', () => {
-  return gulp.src(`${tmpPath}/index.html`)
+  return gulp.src(`${tmpPath}/index.html`, { base: './' })
     .pipe(modifyFile((content) => {
       return content.replace(new RegExp('<script src="docs-imports.js" type="module"></script>'), '<script src="docs-imports.build.js"></script>');
     }))
-    .pipe(gulp.dest(tmpPath));
+    .pipe(gulp.dest('./'));
 });
 
 // Update the imports in the demos.
 gulp.task('docs-update-demo-imports', () => {
-  return gulp.src(`${tmpPath}/dependencies/@catalyst-elements/*/demo/*.html`, { base: tmpPath })
+  return gulp.src(`${tmpPath}/dependencies/@catalyst-elements/*/demo/*.html`, { base: './' })
     .pipe(modifyFile((content) => {
       return content.replace(new RegExp('<script src="import.js" type="module"></script>'), '<script src="../../../marked/marked.min.js"></script><script src="import.build.js"></script>');
     }))
-    .pipe(gulp.dest(tmpPath));
+    .pipe(gulp.dest('./'));
 });
 
 // Generate the docs.
