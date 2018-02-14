@@ -31,8 +31,11 @@ const escodegen = require('escodegen');
 const esprima = require('esprima');
 const file = require('gulp-file');
 const foreach = require('gulp-foreach');
+const fs = require('graceful-fs');
+const glob = require('glob');
 const mergeStream = require('merge-stream');
 const modifyFile = require('gulp-modify-file');
+const named = require('vinyl-named');
 const path = require('path');
 const rename = require('gulp-rename');
 const stripComments = require('gulp-strip-comments');
@@ -327,7 +330,8 @@ gulp.task('create-analysis', () => {
 gulp.task('docs-clone-dependencies', () => {
   return gulp.src([
     'node_modules/**',
-    'index.html'
+    'index.html',
+    'docs-imports.js'
   ], { follow: true, base: './' }).pipe(gulp.dest(`${tmpPath}`));
 });
 
@@ -340,46 +344,60 @@ gulp.task('docs-fix-links', () => {
     .pipe(gulp.dest(tmpPath));
 });
 
-// Build the iron-component-page.
-gulp.task('docs-build-iron-component-page', () => {
-  return gulp.src(`${tmpPath}/node_modules/@polymer/iron-component-page/iron-component-page.js`, { base: tmpPath })
+// Build the docs imports.
+gulp.task('docs-build-imports', () => {
+  return gulp.src(`${tmpPath}/docs-imports.js`, { base: tmpPath })
+    .pipe(named())
     .pipe(webpackStream({
-      target: 'web'
+      target: 'web',
+      output: {
+        chunkFilename: 'docs-imports.[id].build.js',
+        filename: '[name].build.js'
+      }
     }, webpack))
-    .pipe(adjustWebpackBuildForClosureCompiler())
-    .pipe(closureCompiler({
-      compilation_level: 'SIMPLE_OPTIMIZATIONS',
-      warning_level: 'QUIET',
-      language_in: 'ECMASCRIPT6_STRICT',
-      language_out: 'ECMASCRIPT6_STRICT'
-    }))
-    .pipe(rename({
-      basename: 'iron-component-page',
-      extname: '.build.js'
-    }))
-    .pipe(gulp.dest(`${tmpPath}`));
+    .pipe(foreach(function(stream, file) {
+      return stream
+        .pipe(adjustWebpackBuildForClosureCompiler())
+        .pipe(closureCompiler({
+          compilation_level: 'SIMPLE_OPTIMIZATIONS',
+          warning_level: 'QUIET',
+          language_in: 'ECMASCRIPT6_STRICT',
+          language_out: 'ECMASCRIPT6_STRICT'
+        }))
+        .pipe(rename({
+          basename: path.basename(file.path, '.js'),
+        }))
+        .pipe(gulp.dest(`${tmpPath}`));
+    }));
 });
 
 // Build the imports for each demo.
 gulp.task('docs-build-demo-imports', () => {
   return gulp.src(`${tmpPath}/${catalystElementsPath}/*/demo/import.js`)
     .pipe(foreach(function(stream, file) {
+      let output = path.dirname(file.path);
       return stream
-      .pipe(webpackStream({
-        target: 'web'
-      }, webpack))
-      .pipe(adjustWebpackBuildForClosureCompiler())
-      .pipe(closureCompiler({
-        compilation_level: 'SIMPLE_OPTIMIZATIONS',
-        warning_level: 'QUIET',
-        language_in: 'ECMASCRIPT6_STRICT',
-        language_out: 'ECMASCRIPT6_STRICT'
-      }))
-      .pipe(rename({
-        basename: 'import',
-        extname: '.build.js'
-      }))
-      .pipe(gulp.dest(path.dirname(file.path)));
+        .pipe(webpackStream({
+          target: 'web',
+          output: {
+            chunkFilename: 'import.[id].build.js',
+            filename: 'import.build.js'
+          }
+        }, webpack))
+        .pipe(foreach(function(stream, file) {
+          return stream
+            .pipe(adjustWebpackBuildForClosureCompiler())
+            .pipe(closureCompiler({
+              compilation_level: 'SIMPLE_OPTIMIZATIONS',
+              warning_level: 'QUIET',
+              language_in: 'ECMASCRIPT6_STRICT',
+              language_out: 'ECMASCRIPT6_STRICT'
+            }))
+            .pipe(rename({
+              basename: path.basename(file.path, '.js'),
+            }))
+            .pipe(gulp.dest(output));
+        }));
     }));
 });
 
@@ -387,7 +405,7 @@ gulp.task('docs-build-demo-imports', () => {
 gulp.task('docs-update-index-imports', () => {
   return gulp.src(`${tmpPath}/index.html`)
     .pipe(modifyFile((content) => {
-      return content.replace(new RegExp('<script src="node_modules/@polymer/iron-component-page/iron-component-page.js" type="module"></script>'), '<script src="iron-component-page.build.js"></script>');
+      return content.replace(new RegExp('<script src="docs-imports.js" type="module"></script>'), '<script src="docs-imports.build.js"></script>');
     }))
     .pipe(gulp.dest(tmpPath));
 });
@@ -402,8 +420,18 @@ gulp.task('docs-update-demo-imports', () => {
 });
 
 // Generate the docs.
-gulp.task('docs-generate', gulp.series(() => {
-  const docBuilder = new Builder(require('./polymer.json'));
+gulp.task('docs-generate', gulp.series((done) => {
+  let buildConfig = require('./polymer.json');
+
+  glob(`${tmpPath}/*.build.*`, {}, (er, files) => {
+    for (let i = 0; i < files.length; i++) {
+      buildConfig.extraDependencies.push(files[i]);
+    }
+    fs.writeFileSync(`${tmpPath}/polymer.json`, JSON.stringify(buildConfig));
+    done();
+  });
+}, () => {
+  const docBuilder = new Builder(`${tmpPath}/polymer.json`);
   return mergeStream(docBuilder.sources(), docBuilder.dependencies())
     .pipe(gulp.dest(docsPath));
 }, () => {
@@ -424,7 +452,7 @@ gulp.task('build-docs', gulp.series(
   'clean-elements',
   'docs-clone-dependencies',
   'docs-fix-links',
-  'docs-build-iron-component-page',
+  'docs-build-imports',
   'docs-build-demo-imports',
   'docs-update-index-imports',
   'docs-update-demo-imports',
