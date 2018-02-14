@@ -327,22 +327,31 @@ gulp.task('create-analysis', () => {
 });
 
 // Clone all the dependencies needed for docs.
-gulp.task('docs-clone-dependencies', () => {
+gulp.task('docs-clone-dependencies', gulp.series(() => {
+  return gulp.src('node_modules/**', { follow: true }).pipe(gulp.dest(`${tmpPath}/dependencies`));
+}, () => {
   return gulp.src([
-    'node_modules/**',
     'index.html',
-    'docs-imports.js'
-  ], { follow: true, base: './' }).pipe(gulp.dest(`${tmpPath}`));
-});
+    'docs-imports.js',
+    'analysis.json',
+    'polymer.json'
+  ]).pipe(gulp.dest(`${tmpPath}`));
+}));
 
 // Fix links for the docs.
-gulp.task('docs-fix-links', () => {
-  return gulp.src(`${tmpPath}/${catalystElementsPath}/*/demo/**/*[.html|.js]`, { base: tmpPath })
+gulp.task('docs-fix-links', gulp.series(() => {
+  return gulp.src(`${tmpPath}/dependencies/@catalyst-elements/*/demo/**/*[.html|.js]`, { base: tmpPath })
     .pipe(modifyFile((content) => {
       return content.replace(/\.\.\/node_modules\//g, '../../../');
     }))
     .pipe(gulp.dest(tmpPath));
-});
+}, () => {
+  return gulp.src([`${tmpPath}/**/*[.html|.js|.json]`, `!${tmpPath}/dependencies/**`], { base: tmpPath })
+    .pipe(modifyFile((content) => {
+      return content.replace(/node_modules/g, 'dependencies');
+    }))
+    .pipe(gulp.dest(tmpPath));
+}));
 
 // Build the docs imports.
 gulp.task('docs-build-imports', () => {
@@ -373,7 +382,7 @@ gulp.task('docs-build-imports', () => {
 
 // Build the imports for each demo.
 gulp.task('docs-build-demo-imports', () => {
-  return gulp.src(`${tmpPath}/${catalystElementsPath}/*/demo/import.js`)
+  return gulp.src(`${tmpPath}/dependencies/@catalyst-elements/*/demo/import.js`)
     .pipe(foreach(function(stream, file) {
       let output = path.dirname(file.path);
       return stream
@@ -412,7 +421,7 @@ gulp.task('docs-update-index-imports', () => {
 
 // Update the imports in the demos.
 gulp.task('docs-update-demo-imports', () => {
-  return gulp.src(`${tmpPath}/${catalystElementsPath}/*/demo/*.html`, { base: tmpPath })
+  return gulp.src(`${tmpPath}/dependencies/@catalyst-elements/*/demo/*.html`, { base: tmpPath })
     .pipe(modifyFile((content) => {
       return content.replace(new RegExp('<script src="import.js" type="module"></script>'), '<script src="../../../marked/marked.min.js"></script><script src="import.build.js"></script>');
     }))
@@ -421,7 +430,7 @@ gulp.task('docs-update-demo-imports', () => {
 
 // Generate the docs.
 gulp.task('docs-generate', gulp.series((done) => {
-  let buildConfig = require('./polymer.json');
+  let buildConfig = require(`${tmpPath}/polymer.json`);
 
   glob(`${tmpPath}/*.build.*`, {}, (er, files) => {
     for (let i = 0; i < files.length; i++) {

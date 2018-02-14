@@ -6,9 +6,9 @@
     "tmp/node_modules/@catalyst-elements/**"
   ],
   "extraDependencies": [
-    "node_modules/@webcomponents/webcomponentsjs/**/*",
-    "node_modules/@webcomponents/shadycss/**/*",
-    "analysis.json"
+    "tmp/node_modules/@webcomponents/webcomponentsjs/**/*",
+    "tmp/node_modules/@webcomponents/shadycss/**/*",
+    "tmp/analysis.json"
   ],
   "builds": [{
     "name": "docs",
