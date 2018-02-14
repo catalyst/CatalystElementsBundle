@@ -1,15 +1,11 @@
-tmp/
+/tmp/
 
 # Node
 # "yarn.lock" file is used instead of "package-lock.json"
-node_modules/
-npm-debug.log
-yarn-error.log
-package-lock.json
-
-# Bower
-bower_components
+/node_modules/
+/npm-debug.log
+/yarn-error.log
+/package-lock.json
 
 # Docs
-docs/
-analysis.json
+/analysis.json
