@@ -1,10 +1,9 @@
 # Catalyst Elements
 
-[![pipeline status](https://gitlab.wgtn.cat-it.co.nz/CatalystElements/CatalystElements/badges/master/pipeline.svg)](https://gitlab.wgtn.cat-it.co.nz/CatalystElements/CatalystElements/pipelines)
 [![License](https://img.shields.io/badge/license-BSD%203--Clause-blue.svg)](LICENSE)
 [![Not published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-unpublished-red.svg)](https://gitlab.wgtn.cat-it.co.nz/CatalystElements/CatalystElements)
 
-[API documentation & Demos ↗](http://catalystelements.pages.gitlab.wgtn.cat-it.co.nz/CatalystElements/)
+[API documentation & Demos ↗](https://catalyst.github.io/CatalystElements/)
 
 A collection of all the Catalyst Elements.
 
@@ -13,13 +12,13 @@ A collection of all the Catalyst Elements.
 Install with npm:
 
 ```sh
-npm install --save "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/CatalystElements.git"
+npm install --save @catalyst-elements/bundle
 ```
 
 Install with yarn:
 
 ```sh
-yarn add "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/CatalystElements.git"
+yarn add @catalyst-elements/bundle
 ```
 
 ## Usage
@@ -53,12 +52,12 @@ All included elements will now be available for use - see release notes for deta
 Import the Catalyst Element's bundle on each page that uses one or more catalyst elements.
 
 ```html
-<script src="dist/catalyst-elements.js"></script>
+<script src="./node_modules/@catalyst-elements/bundle/dist/catalyst-elements.js"></script>
 ```
 
 ## Browser Compatibility
 
-See details on the wiki: [Catalyst Elements - Browser Compatibility](https://wiki.wgtn.cat-it.co.nz/wiki/Catalyst_Elements#Browser_Compatibility)
+See details on the wiki: [Browser Compatibility](https://github.com/catalyst/CatalystElements/wiki/Browser-Compatibility)
 
 ## Contributions
 
@@ -89,7 +88,7 @@ In the `src/catalyst-elements.js` file, import the element with `import { Elemen
 
 The element will now be included in future builds.
 
-#### Setting Up Automatic Builds
+<!-- #### Setting Up Automatic Builds
 
 When creating a new release of an element, that element can automatically trigger a new build and release of the catalyst-elements bundle.
 
@@ -114,7 +113,7 @@ update_bundle:
 
 ```
 
-Now whenever a new version tag is release for that element, this repo will be notified and will update accordingly.
+Now whenever a new version tag is release for that element, this repo will be notified and will update accordingly. -->
 
 ### Building the Bundle
 
@@ -135,9 +134,7 @@ yarn run build
 
 Docs are build with [Polymer](https://www.polymer-project.org/), the [Polymer Build Tool](https://github.com/Polymer/polymer-build) and the [Polymer Analyzer](https://github.com/Polymer/polymer-analyzer).
 
-Docs will automatically be update on GitLab pages whenever a change is pushed to the master branch.
-
-To build the docs locally, first run the analyzer which will update `./analysis.json`. The docs are then built from this file.
+To build the docs, first run the analyzer which will update `./analysis.json`. The docs are then built from this file.
 
 ```sh
 yarn run analyze
