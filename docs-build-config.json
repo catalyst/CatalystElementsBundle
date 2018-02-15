@@ -3,11 +3,11 @@
   "fragments": [],
   "sources": [
     "tmp/index.html",
-    "tmp/node_modules/@catalyst-elements/**"
+    "tmp/dependencies/@catalyst-elements/**"
   ],
   "extraDependencies": [
-    "tmp/node_modules/@webcomponents/webcomponentsjs/**/*",
-    "tmp/node_modules/@webcomponents/shadycss/**/*",
+    "tmp/dependencies/@webcomponents/webcomponentsjs/**/*",
+    "tmp/dependencies/@webcomponents/shadycss/**/*",
     "tmp/analysis.json"
   ],
   "builds": [{
