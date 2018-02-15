@@ -1,7 +1,7 @@
 # Catalyst Elements
 
 [![License](https://img.shields.io/badge/license-BSD%203--Clause-blue.svg)](LICENSE)
-[![Not published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-unpublished-red.svg)](https://github.com/catalyst/CatalystElements)
+[![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/collection/catalyst/CatalystElements)
 
 [API documentation & Demos ↗](https://catalyst.github.io/CatalystElements/)
 
