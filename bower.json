@@ -2,10 +2,9 @@
   "name": "@catalyst-elements/bundle",
   "description": "A collection of all the catalyst elements.",
   "main": "src/catalyst-elements.js",
-  "author": {
-    "name": "Rebecca Stevens",
-    "email": "rebeccastevens@catalyst.net.nz"
-  },
+  "authors": [
+    "Rebecca Stevens <rebeccastevens@catalyst.net.nz>"
+  ],
   "license": "BSD-3-Clause",
   "keywords": [
     "element-collection",
