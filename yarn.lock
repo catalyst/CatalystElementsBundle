@@ -54,19 +54,19 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@catalyst-elements/catalyst-flip-button@git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-flip-button.git":
-  version "0.4.2"
-  resolved "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-flip-button.git#8fe5f382db00b5984a9d285f016a3ac0ab7c7b91"
+"@catalyst-elements/catalyst-flip-button@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@catalyst-elements/catalyst-flip-button/-/catalyst-flip-button-0.5.0.tgz#66abef13e7996d2163ddb543ac1dac062f7641da"
 
-"@catalyst-elements/catalyst-toggle-button@git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-toggle-button.git":
-  version "0.3.2"
-  resolved "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-toggle-button.git#dafbf309e9166348a3afc49ceb6df6db15f2bcb7"
+"@catalyst-elements/catalyst-toggle-button@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@catalyst-elements/catalyst-toggle-button/-/catalyst-toggle-button-0.4.0.tgz#18e14e05b2a44f9446e91bbe250f30e2eb4a3cd2"
 
-"@catalyst-elements/catalyst-toggle-switch@git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-toggle-switch.git":
-  version "0.2.2"
-  resolved "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-toggle-switch.git#c1954a6896e86f58ca2ca42b388d80aad65acb40"
+"@catalyst-elements/catalyst-toggle-switch@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@catalyst-elements/catalyst-toggle-switch/-/catalyst-toggle-switch-0.3.0.tgz#93d13d3787c9d22981721dcea2caa9e94a558841"
   dependencies:
-    "@catalyst-elements/catalyst-toggle-button" "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-toggle-button.git"
+    "@catalyst-elements/catalyst-toggle-button" "^0.4.0"
 
 "@polymer/app-layout@^3.0.0-pre.7":
   version "3.0.0-pre.8"
