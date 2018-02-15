@@ -9,7 +9,7 @@
     "build": "scripts/build.sh",
     "analyze": "scripts/analyze.sh",
     "build-docs": "scripts/build-docs.sh",
-    "postinstall": "scripts/postinstall.sh"
+    "fix-dependencies": "scripts/fix-dependencies.sh"
   },
   "dependencies": {
     "@catalyst-elements/catalyst-flip-button": "git+https://git@gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-flip-button.git",
