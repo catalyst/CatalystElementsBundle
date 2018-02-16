@@ -54,17 +54,21 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@catalyst-elements/catalyst-flip-button@^0.5.0":
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/@catalyst-elements/catalyst-flip-button/-/catalyst-flip-button-0.5.0.tgz#66abef13e7996d2163ddb543ac1dac062f7641da"
+"@catalyst-elements/catalyst-flip-button@^0.5.1":
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/@catalyst-elements/catalyst-flip-button/-/catalyst-flip-button-0.5.1.tgz#58071bfab9ae1a9385cce72722f9b8da40910ca5"
 
 "@catalyst-elements/catalyst-toggle-button@^0.4.0":
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/@catalyst-elements/catalyst-toggle-button/-/catalyst-toggle-button-0.4.0.tgz#18e14e05b2a44f9446e91bbe250f30e2eb4a3cd2"
 
-"@catalyst-elements/catalyst-toggle-switch@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@catalyst-elements/catalyst-toggle-switch/-/catalyst-toggle-switch-0.3.0.tgz#93d13d3787c9d22981721dcea2caa9e94a558841"
+"@catalyst-elements/catalyst-toggle-button@^0.4.2":
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/@catalyst-elements/catalyst-toggle-button/-/catalyst-toggle-button-0.4.2.tgz#4d2a330303efeed5c5a43be2bcd676493a2b6b5b"
+
+"@catalyst-elements/catalyst-toggle-switch@^0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@catalyst-elements/catalyst-toggle-switch/-/catalyst-toggle-switch-0.3.1.tgz#3c7513b5014b2658ca5b1731fec2dd953f694a9b"
   dependencies:
     "@catalyst-elements/catalyst-toggle-button" "^0.4.0"
 
