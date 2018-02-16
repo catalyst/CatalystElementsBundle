@@ -1,5 +1,8 @@
 # Catalyst Elements
 
+[![GitHub release](https://img.shields.io/github/release/catalyst/CatalystElements.svg?style=flat-square)](https://github.com/catalyst/CatalystElements/releases)
+[![David](https://img.shields.io/david/catalyst/CatalystElements.svg?style=flat-square)](https://david-dm.org/catalyst/CatalystElements)
+[![David](https://img.shields.io/david/dev/catalyst/CatalystElements.svg?style=flat-square)](https://david-dm.org/catalyst/CatalystElements?type=dev)
 [![License](https://img.shields.io/badge/license-BSD%203--Clause-blue.svg?style=flat-square)](LICENSE)
 [![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg?style=flat-square)](https://www.webcomponents.org/collection/catalyst/CatalystElements)
 
