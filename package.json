@@ -1,6 +1,6 @@
 {
   "name": "@catalyst-elements/bundle",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "A collection of all the catalyst elements.",
   "license": "BSD-3-Clause",
   "main": "src/catalyst-elements.js",
