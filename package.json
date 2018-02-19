@@ -27,7 +27,7 @@
     "build": "scripts/build.sh",
     "analyze": "scripts/analyze.sh",
     "build-docs": "scripts/build-docs.sh",
-    "fix-dependencies": "scripts/fix-dependencies.sh"
+    "postinstall": "scripts/fix-dependencies.sh"
   },
   "dependencies": {
     "@catalyst-elements/catalyst-flip-button": "^0.5.1",

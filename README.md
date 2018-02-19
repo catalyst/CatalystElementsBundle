@@ -78,7 +78,6 @@ Install dependencies with:
 
 ```sh
 yarn
-yarn run fix-dependencies
 ```
 
 ### Adding New Elements to this Bundle
