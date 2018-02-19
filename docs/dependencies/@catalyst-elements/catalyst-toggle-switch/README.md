@@ -1,7 +1,11 @@
 # &lt;catalyst-toggle-switch&gt;
 
-[![License](https://img.shields.io/badge/license-BSD%203--Clause-blue.svg)](LICENSE)
-[![Not published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-unpublished-red.svg)](https://gitlab.wgtn.cat-it.co.nz/CatalystElements/catalyst-toggle-switch)
+[![Travis](https://img.shields.io/travis/catalyst/catalyst-toggle-switch.svg?style=flat-square)](https://travis-ci.org/catalyst/catalyst-toggle-switch)
+[![GitHub release](https://img.shields.io/github/release/catalyst/catalyst-toggle-switch.svg?style=flat-square)](https://github.com/catalyst/catalyst-toggle-switch/releases)
+[![David](https://img.shields.io/david/catalyst/catalyst-toggle-switch.svg?style=flat-square)](https://david-dm.org/catalyst/catalyst-toggle-switch)
+[![David](https://img.shields.io/david/dev/catalyst/catalyst-toggle-switch.svg?style=flat-square)](https://david-dm.org/catalyst/catalyst-toggle-switch?type=dev)
+[![License](https://img.shields.io/badge/license-BSD%203--Clause-blue.svg?style=flat-square)](LICENSE)
+[![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg?style=flat-square)](https://www.webcomponents.org/element/catalyst/catalyst-toggle-switch)
 
 [Live Demo ↗](https://catalyst.github.io/CatalystElements/#/elements/catalyst-toggle-switch/demos/basic)
 |
@@ -29,24 +33,10 @@ yarn add @catalyst-elements/catalyst-toggle-switch
 
 ### As a Module (Recommend)
 
-Import the module on each page that uses the component, then register the element.
+Import the module on each page that uses the component.
 
 ```html
-<script type="module">
-  // Import the component.
-  import { CatalystToggleSwitch } from './node_modules/@catalyst-elements/catalyst-toggle-switch/dist/catalyst-toggle-switch.module.js';
-
-  // If not using web component polyfills or if polyfills are ready, register the element.
-  if (window.WebComponents === undefined || window.WebComponents.ready) {
-    CatalystToggleSwitch.register();
-  }
-  // Otherwise wait until the polyfills are ready, then register the element.
-  else {
-    window.addEventListener('WebComponentsReady', () => {
-      CatalystToggleSwitch.register();
-    });
-  }
-</script>
+<script type="module" src="node_modules/@catalyst-elements/catalyst-toggle-switch/dist/catalyst-toggle-switch.module.js"></script>
 ```
 
 Then simply use it like any other tag:
@@ -95,7 +85,6 @@ Install dependencies with:
 
 ```sh
 yarn
-yarn run fix-dependencies
 ```
 
 ### Building

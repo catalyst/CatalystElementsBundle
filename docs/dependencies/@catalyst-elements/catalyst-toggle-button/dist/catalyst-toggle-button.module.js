@@ -27,15 +27,27 @@
 class CatalystToggleButton extends HTMLElement {
 
   /**
-   * @constant {String}
-   *   The element's tag name.
+   * The element's tag name.
+   *
+   * @returns {string}
    */
   static get is() {
     return 'catalyst-toggle-button';
   }
 
   /**
+   * Return's true if this element has been registered, otherwise false.
+   *
+   * @returns {boolean}
+   */
+  static get _isRegistered() {
+    return !!CatalystToggleButton.__isRegistered;
+  }
+
+  /**
    * Get the default template used by this element.
+   *
+   * @returns {HTMLTemplateElement}
    */
   static get template() {
     let template = document.createElement('template');
@@ -53,7 +65,9 @@ class CatalystToggleButton extends HTMLElement {
   /**
    * Key codes.
    *
+   * @readonly
    * @enum {number}
+   * @returns {object}
    */
   static get _KEYCODE() {
     if (this.__keycode === undefined) {
@@ -79,8 +93,22 @@ class CatalystToggleButton extends HTMLElement {
   /**
    * Register this class as an element.
    */
-  static register() {
-    window.customElements.define(CatalystToggleButton.is, CatalystToggleButton);
+  static _register() {
+    const doRegister = () => {
+      window.customElements.define(CatalystToggleButton.is, CatalystToggleButton);
+      CatalystToggleButton.__isRegistered = true;
+    };
+
+    // If not using web component polyfills or if polyfills are ready, register the element.
+    if (window.WebComponents === undefined || window.WebComponents.ready) {
+      doRegister();
+    }
+    // Otherwise wait until the polyfills are ready, then register the element.
+    else {
+      window.addEventListener('WebComponentsReady', () => {
+        doRegister();
+      });
+    }
   }
 
   /**
@@ -111,6 +139,8 @@ class CatalystToggleButton extends HTMLElement {
 
   /**
    * Fires when the element is inserted into the DOM.
+   *
+   * @protected
    */
   connectedCallback() {
     // If using ShadyCSS.
@@ -168,6 +198,8 @@ class CatalystToggleButton extends HTMLElement {
 
   /**
    * Fires when the element is removed from the DOM.
+   *
+   * @protected
    */
   disconnectedCallback() {
     this.removeEventListener('keydown', this._onKeyDown);
@@ -343,6 +375,7 @@ class CatalystToggleButton extends HTMLElement {
   /**
    * Fired when any of the attributes in the `observedAttributes` array change.
    *
+   * @protected
    * @param {string} name
    *   The name of the attribute that changed.
    * @param {*} oldValue
@@ -492,6 +525,11 @@ class CatalystToggleButton extends HTMLElement {
       bubbles: true,
     }));
   }
+}
+
+// Register the element if it is not already registered.
+if (!CatalystToggleButton._isRegistered) {
+  CatalystToggleButton._register();
 }
 
 // Export the element.

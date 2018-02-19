@@ -192,22 +192,9 @@ gulp.task('build-module', () => {
       // Add a comment to the top of the file.
       content = '// Import the catalyts elements.\n' + content;
 
-      // Create a function to register all the imported elements.
-      content = content + '\n/**\n * Register all the elements in this bundle.\n */\n';
-      content = content + 'function registerCatalystElements() {\n';
-      for (let i = 0; i < imports.length; i++) {
-        content = `${content}  ${imports[i]}.register();\n`;
-      }
-      content = content + '}\n';
-
-      // The things to export.
-      let exports = [
-        'registerCatalystElements'
-      ].concat(imports);
-
       // Export all the things.
-      content = content + '\n// Export all the catalyst elements and the `registerCatalystElements` function.\n';
-      content = content + 'export {\n  ' + exports.join(',\n  ') + '\n};\n'
+      content = content + '\n// Export all the catalyst elements.\n';
+      content = content + 'export {\n  ' + imports.join(',\n  ') + '\n};\n'
 
       return content;
     }))
@@ -218,60 +205,9 @@ gulp.task('build-module', () => {
     .pipe(gulp.dest(distPath));
 });
 
-// Create the file to be built into the es6 version of the components.
-gulp.task('prebuild-es6', () => {
-  return gulp.src(`${srcPath}/${bundleName}.js`)
-    .pipe(modifyFile((content) => {
-      let imports = getStaticImports(content);
-
-      let registerElements = '';
-      for (let i = 0; i < imports.length; i++) {
-        registerElements = `${registerElements}
-    // Make the ${imports[i]} class globally accessible under the \`CatalystElements\` object and register it.
-    window.CatalystElements.${imports[i]} = ${imports[i]};
-    ${imports[i]}.register();
-`
-      }
-      registerElements = registerElements.trim();
-
-      content = `${content}
-
-(() => {
-  /**
-   * Namespace for all the Catalyst Elements.
-   *
-   * @namespace CatalystElements
-   */
-  window.CatalystElements = window.CatalystElements || {};
-
-  /**
-   * Create the custom elements.
-   */
-  function registerElements() {
-    ${registerElements}
-  }
-
-
-  // If not using web component polyfills or if polyfills are ready, register the elements.
-  if (window.WebComponents === undefined || window.WebComponents.ready) {
-    registerElements();
-  }
-  // Otherwise wait until the polyfills are ready.
-  else {
-    window.addEventListener('WebComponentsReady', () => {
-      registerElements();
-    });
-  }
-})();`
-
-      return content;
-    }))
-    .pipe(gulp.dest(tmpPath));
-});
-
 // Build the es6 version of the components.
 gulp.task('build-es6', () => {
-    return gulp.src(`${tmpPath}/${bundleName}.js`)
+    return gulp.src(`${srcPath}/${bundleName}.js`)
     .pipe(webpackStream({
       target: 'web'
     }, webpack))
@@ -421,7 +357,7 @@ gulp.task('docs-generate', gulp.series((done) => {
 }));
 
 // Build all the components' versions.
-gulp.task('build', gulp.series('clean-dist', gulp.parallel('build-module', 'prebuild-es6'), 'build-es6', gulp.parallel('build-es6-min', 'build-es5-min'), 'clean-tmp'));
+gulp.task('build', gulp.series('clean-dist', gulp.parallel('build-module', 'build-es6'), gulp.parallel('build-es6-min', 'build-es5-min'), 'clean-tmp'));
 
 // Build the docs for all the components' versions.
 gulp.task('build-docs', gulp.series(

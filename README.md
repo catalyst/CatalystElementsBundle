@@ -28,24 +28,10 @@ yarn add @catalyst-elements/bundle
 
 ### As a Module (Recommend)
 
-Import the module on each page that uses one or more catalyst elements, then register all the elements.
+Import the module on each page that uses the component.
 
 ```html
-<script type="module">
-  // Import all the Catalyst Elements.
-  import * as CatalystElements from './node_modules/@catalyst-elements/bundle/dist/catalyst-elements.module.js';
-
-  // If not using web component polyfills or if polyfills are ready, register all the Catalyst Elements.
-  if (window.WebComponents === undefined || window.WebComponents.ready) {
-    CatalystElements.registerCatalystElements();
-  }
-  // Otherwise wait until the polyfills are ready.
-  else {
-    window.addEventListener('WebComponentsReady', () => {
-      CatalystElements.registerCatalystElements();
-    });
-  }
-</script>
+<script type="module" src="node_modules/@catalyst-elements/bundle/dist/catalyst-elements.module.js"></script>
 ```
 
 All included elements will now be available for use - see release notes for details on which elements are included in the bundle.
@@ -55,7 +41,7 @@ All included elements will now be available for use - see release notes for deta
 Import the Catalyst Element's bundle on each page that uses one or more catalyst elements.
 
 ```html
-<script src="./node_modules/@catalyst-elements/bundle/dist/catalyst-elements.js"></script>
+<script src="node_modules/@catalyst-elements/bundle/dist/catalyst-elements.js"></script>
 ```
 
 ## Browser Compatibility

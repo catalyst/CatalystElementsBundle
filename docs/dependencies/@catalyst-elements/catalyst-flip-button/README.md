@@ -1,7 +1,11 @@
 # &lt;catalyst-flip-button&gt;
 
-[![License](https://img.shields.io/badge/license-BSD%203--Clause-blue.svg)](LICENSE)
-[![Not published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-unpublished-red.svg)](https://github.com/catalyst/catalyst-flip-button)
+[![Travis](https://img.shields.io/travis/catalyst/catalyst-flip-button.svg?style=flat-square)](https://travis-ci.org/catalyst/catalyst-flip-button)
+[![GitHub release](https://img.shields.io/github/release/catalyst/catalyst-flip-button.svg?style=flat-square)](https://github.com/catalyst/catalyst-flip-button/releases)
+[![David](https://img.shields.io/david/catalyst/catalyst-flip-button.svg?style=flat-square)](https://david-dm.org/catalyst/catalyst-flip-button)
+[![David](https://img.shields.io/david/dev/catalyst/catalyst-flip-button.svg?style=flat-square)](https://david-dm.org/catalyst/catalyst-flip-button?type=dev)
+[![License](https://img.shields.io/badge/license-BSD%203--Clause-blue.svg?style=flat-square)](LICENSE)
+[![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg?style=flat-square)](https://www.webcomponents.org/element/catalyst/catalyst-flip-button)
 
 [Live Demo ↗](https://catalyst.github.io/CatalystElements/#/elements/catalyst-flip-button/demos/basic)
 |
@@ -29,24 +33,10 @@ yarn add @catalyst-elements/catalyst-flip-button
 
 ### As a Module (Recommend)
 
-Import the module on each page that uses the component, then register the element.
+Import the module on each page that uses the component.
 
 ```html
-<script type="module">
-  // Import the component.
-  import { CatalystFlipButton } from './node_modules/@catalyst-elements/catalyst-flip-button/dist/catalyst-flip-button.module.js';
-
-  // If not using web component polyfills or if polyfills are ready, register the element.
-  if (window.WebComponents === undefined || window.WebComponents.ready) {
-    CatalystFlipButton.register();
-  }
-  // Otherwise wait until the polyfills are ready, then register the element.
-  else {
-    window.addEventListener('WebComponentsReady', () => {
-      CatalystFlipButton.register();
-    });
-  }
-</script>
+<script type="module" src="node_modules/@catalyst-elements/catalyst-toggle-switch/dist/catalyst-toggle-switch.module.js"></script>
 ```
 
 Then simply use it like any other tag:
@@ -104,7 +94,6 @@ Install dependencies with:
 
 ```sh
 yarn
-yarn run fix-dependencies
 ```
 
 ### Building

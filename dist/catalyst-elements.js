@@ -98,15 +98,27 @@
 class CatalystToggleButton extends HTMLElement {
 
   /**
-   * @constant {String}
-   *   The element's tag name.
+   * The element's tag name.
+   *
+   * @returns {string}
    */
   static get is() {
     return 'catalyst-toggle-button';
   }
 
   /**
+   * Return's true if this element has been registered, otherwise false.
+   *
+   * @returns {boolean}
+   */
+  static get _isRegistered() {
+    return !!CatalystToggleButton.__isRegistered;
+  }
+
+  /**
    * Get the default template used by this element.
+   *
+   * @returns {HTMLTemplateElement}
    */
   static get template() {
     let template = document.createElement('template');
@@ -124,7 +136,9 @@ class CatalystToggleButton extends HTMLElement {
   /**
    * Key codes.
    *
+   * @readonly
    * @enum {number}
+   * @returns {object}
    */
   static get _KEYCODE() {
     if (this.__keycode === undefined) {
@@ -150,8 +164,22 @@ class CatalystToggleButton extends HTMLElement {
   /**
    * Register this class as an element.
    */
-  static register() {
-    window.customElements.define(CatalystToggleButton.is, CatalystToggleButton);
+  static _register() {
+    const doRegister = () => {
+      window.customElements.define(CatalystToggleButton.is, CatalystToggleButton);
+      CatalystToggleButton.__isRegistered = true;
+    };
+
+    // If not using web component polyfills or if polyfills are ready, register the element.
+    if (window.WebComponents === undefined || window.WebComponents.ready) {
+      doRegister();
+    }
+    // Otherwise wait until the polyfills are ready, then register the element.
+    else {
+      window.addEventListener('WebComponentsReady', () => {
+        doRegister();
+      });
+    }
   }
 
   /**
@@ -182,6 +210,8 @@ class CatalystToggleButton extends HTMLElement {
 
   /**
    * Fires when the element is inserted into the DOM.
+   *
+   * @protected
    */
   connectedCallback() {
     // If using ShadyCSS.
@@ -239,6 +269,8 @@ class CatalystToggleButton extends HTMLElement {
 
   /**
    * Fires when the element is removed from the DOM.
+   *
+   * @protected
    */
   disconnectedCallback() {
     this.removeEventListener('keydown', this._onKeyDown);
@@ -414,6 +446,7 @@ class CatalystToggleButton extends HTMLElement {
   /**
    * Fired when any of the attributes in the `observedAttributes` array change.
    *
+   * @protected
    * @param {string} name
    *   The name of the attribute that changed.
    * @param {*} oldValue
@@ -565,6 +598,11 @@ class CatalystToggleButton extends HTMLElement {
   }
 }
 
+// Register the element if it is not already registered.
+if (!CatalystToggleButton._isRegistered) {
+  CatalystToggleButton._register();
+}
+
 // Export the element.
 
 
@@ -584,50 +622,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-(() => {
-  /**
-   * Namespace for all the Catalyst Elements.
-   *
-   * @namespace CatalystElements
-   */
-  window.CatalystElements = window.CatalystElements || {};
-
-  /**
-   * Create the custom elements.
-   */
-  function registerElements() {
-    // Make the CatalystFlipButton class globally accessible under the `CatalystElements` object and register it.
-    window.CatalystElements.CatalystFlipButton = __WEBPACK_IMPORTED_MODULE_0__node_modules_catalyst_elements_catalyst_flip_button_dist_catalyst_flip_button_module_js__["a" /* CatalystFlipButton */];
-    __WEBPACK_IMPORTED_MODULE_0__node_modules_catalyst_elements_catalyst_flip_button_dist_catalyst_flip_button_module_js__["a" /* CatalystFlipButton */].register();
-
-    // Make the CatalystToggleButton class globally accessible under the `CatalystElements` object and register it.
-    window.CatalystElements.CatalystToggleButton = __WEBPACK_IMPORTED_MODULE_1__node_modules_catalyst_elements_catalyst_toggle_button_dist_catalyst_toggle_button_module_js__["a" /* CatalystToggleButton */];
-    __WEBPACK_IMPORTED_MODULE_1__node_modules_catalyst_elements_catalyst_toggle_button_dist_catalyst_toggle_button_module_js__["a" /* CatalystToggleButton */].register();
-
-    // Make the CatalystToggleSwitch class globally accessible under the `CatalystElements` object and register it.
-    window.CatalystElements.CatalystToggleSwitch = __WEBPACK_IMPORTED_MODULE_2__node_modules_catalyst_elements_catalyst_toggle_switch_dist_catalyst_toggle_switch_module_js__["a" /* CatalystToggleSwitch */];
-    __WEBPACK_IMPORTED_MODULE_2__node_modules_catalyst_elements_catalyst_toggle_switch_dist_catalyst_toggle_switch_module_js__["a" /* CatalystToggleSwitch */].register();
-  }
-
-
-  // If not using web component polyfills or if polyfills are ready, register the elements.
-  if (window.WebComponents === undefined || window.WebComponents.ready) {
-    registerElements();
-  }
-  // Otherwise wait until the polyfills are ready.
-  else {
-    window.addEventListener('WebComponentsReady', () => {
-      registerElements();
-    });
-  }
-})();
-
 /***/ }),
 /* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CatalystFlipButton; });
+/* unused harmony export CatalystFlipButton */
 /**
  * `<catalyst-flip-button>` is a wrapper for a `<select>` element.
  * It displays as a button and flips between different options.
@@ -671,11 +671,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 class CatalystFlipButton extends HTMLElement {
 
   /**
-   * @constant {String}
-   *   The element's tag name.
+   * The element's tag name.
+   *
+   * @returns {string}
    */
   static get is() {
     return 'catalyst-flip-button';
+  }
+
+  /**
+   * Return's true if this element has been registered, otherwise false.
+   *
+   * @returns {boolean}
+   */
+  static get _isRegistered() {
+    return !!CatalystFlipButton.__isRegistered;
   }
 
   /**
@@ -734,8 +744,22 @@ class CatalystFlipButton extends HTMLElement {
   /**
    * Register this class as an element.
    */
-  static register() {
-    window.customElements.define(CatalystFlipButton.is, CatalystFlipButton);
+  static _register() {
+    const doRegister = () => {
+      window.customElements.define(CatalystFlipButton.is, CatalystFlipButton);
+      CatalystFlipButton.__isRegistered = true;
+    };
+
+    // If not using web component polyfills or if polyfills are ready, register the element.
+    if (window.WebComponents === undefined || window.WebComponents.ready) {
+      doRegister();
+    }
+    // Otherwise wait until the polyfills are ready, then register the element.
+    else {
+      window.addEventListener('WebComponentsReady', () => {
+        doRegister();
+      });
+    }
   }
 
   /**
@@ -1425,6 +1449,11 @@ class CatalystFlipButton extends HTMLElement {
   }
 }
 
+// Register the element if it is not already registered.
+if (!CatalystFlipButton._isRegistered) {
+  CatalystFlipButton._register();
+}
+
 // Export the element.
 
 
@@ -1434,7 +1463,7 @@ class CatalystFlipButton extends HTMLElement {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CatalystToggleSwitch; });
+/* unused harmony export CatalystToggleSwitch */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__catalyst_toggle_button_dist_catalyst_toggle_button_module_js__ = __webpack_require__(0);
 // Import dependencies.
 
@@ -1481,19 +1510,31 @@ class CatalystFlipButton extends HTMLElement {
 class CatalystToggleSwitch extends __WEBPACK_IMPORTED_MODULE_0__catalyst_toggle_button_dist_catalyst_toggle_button_module_js__["a" /* CatalystToggleButton */] {
 
   /**
-   * @constant {String}
-   *   The element's tag name.
+   * The element's tag name.
+   *
+   * @returns {string}
    */
   static get is() {
     return 'catalyst-toggle-switch';
   }
 
   /**
+   * Return's true if this element has been registered, otherwise false.
+   *
+   * @returns {boolean}
+   */
+  static get _isRegistered() {
+    return !!CatalystToggleSwitch.__isRegistered;
+  }
+
+  /**
    * Get the default template used by this element.
+   *
+   * @returns {HTMLTemplateElement}
    */
   static get template() {
     let template = document.createElement('template');
-    template.innerHTML = `<style>:host{position:relative;display:inline-block;width:54px;width:calc(var(--catalyst-toggle-switch-bar-width, 44px) + 2 * var(--catalyst-toggle-switch-knob-offset, 5px));height:26px;height:calc(var(--catalyst-toggle-switch-bar-height, 16px) + 2 * var(--catalyst-toggle-switch-knob-offset, 5px));min-width:var(--catalyst-toggle-switch-bar-width,44px);min-height:var(--catalyst-toggle-switch-bar-height,16px);margin:0 8px;vertical-align:middle}#bar{position:absolute;top:5px;top:var(--catalyst-toggle-switch-knob-offset,5px);left:5px;left:var(--catalyst-toggle-switch-knob-offset,5px);width:44px;width:var(--catalyst-toggle-switch-bar-width,44px);height:16px;height:var(--catalyst-toggle-switch-bar-height,16px);cursor:pointer;background-color:#ced4da;background-color:var(--catalyst-toggle-switch-bar-color,#ced4da);border:none;border:var(--catalyst-toggle-switch-bar-border,none);border-radius:8px;border-radius:calc(var(--catalyst-toggle-switch-bar-height, 16px) / 2);-webkit-box-sizing:border-box;box-sizing:border-box;-webkit-transition:background-color .3s ease,border .3s ease;transition:background-color .3s ease,border .3s ease;will-change:background-color,border}#bar.negitive-knob-offset{top:0;left:0}#knob{position:absolute;top:-5px;top:calc(0px - var(--catalyst-toggle-switch-knob-offset, 5px) - var(--catalyst-toggle-switch-bar-border-top-wdith, 0px));left:-5px;left:calc(0px - var(--catalyst-toggle-switch-knob-offset, 5px) - var(--catalyst-toggle-switch-bar-border-left-wdith, 0px));width:26px;width:var(--catalyst-toggle-switch-knob-size,26px);height:26px;height:var(--catalyst-toggle-switch-knob-size,26px);background-color:#fff;background-color:var(--catalyst-toggle-switch-knob-color,#fff);border:1px solid rgba(0,0,0,.04);border:var(--catalyst-toggle-switch-knob-border,solid 1px rgba(0,0,0,.04));border-radius:13px;border-radius:calc(var(--catalyst-toggle-switch-knob-size, 26px) / 2);-webkit-box-shadow:0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12),0 3px 1px -2px rgba(0,0,0,.2);box-shadow:0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12),0 3px 1px -2px rgba(0,0,0,.2);-webkit-box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12),0 3px 1px -2px rgba(0,0,0,.2));box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12),0 3px 1px -2px rgba(0,0,0,.2));-webkit-box-sizing:border-box;box-sizing:border-box;-webkit-transition:width .28s ease,height .28s ease,background-color .28s ease,border .28s ease,-webkit-transform .28s ease,-webkit-box-shadow .28s cubic-bezier(.4,0,.2,1);transition:width .28s ease,height .28s ease,background-color .28s ease,border .28s ease,-webkit-transform .28s ease,-webkit-box-shadow .28s cubic-bezier(.4,0,.2,1);transition:width .28s ease,height .28s ease,background-color .28s ease,border .28s ease,transform .28s ease,box-shadow .28s cubic-bezier(.4,0,.2,1);transition:width .28s ease,height .28s ease,background-color .28s ease,border .28s ease,transform .28s ease,box-shadow .28s cubic-bezier(.4,0,.2,1),-webkit-transform .28s ease,-webkit-box-shadow .28s cubic-bezier(.4,0,.2,1);will-change:width,height,background-color,border,transform,box-shadow}#knob:hover{-webkit-box-shadow:0 3px 4px 0 rgba(0,0,0,.14),0 1px 8px 0 rgba(0,0,0,.12),0 3px 3px -2px rgba(0,0,0,.4);box-shadow:0 3px 4px 0 rgba(0,0,0,.14),0 1px 8px 0 rgba(0,0,0,.12),0 3px 3px -2px rgba(0,0,0,.4);-webkit-box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 3px 4px 0 rgba(0,0,0,.14),0 1px 8px 0 rgba(0,0,0,.12),0 3px 3px -2px rgba(0,0,0,.4));box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 3px 4px 0 rgba(0,0,0,.14),0 1px 8px 0 rgba(0,0,0,.12),0 3px 3px -2px rgba(0,0,0,.4))}:host([checked]) #knob{-webkit-transform:translateX(28px);transform:translateX(28px);-webkit-transform:translateX(calc(var(--catalyst-toggle-switch-bar-width, 44px) + 2 * var(--catalyst-toggle-switch-knob-offset, 5px) - var(--catalyst-toggle-switch-knob-size, 26px) + var(--catalyst-toggle-switch-bar-border-left-wdith, 0px)));transform:translateX(calc(var(--catalyst-toggle-switch-bar-width, 44px) + 2 * var(--catalyst-toggle-switch-knob-offset, 5px) - var(--catalyst-toggle-switch-knob-size, 26px) + var(--catalyst-toggle-switch-bar-border-left-wdith, 0px)))}:host([checked]) .negitive-knob-offset #knob{-webkit-transform:translateX(calc(var(--catalyst-toggle-switch-bar-width, 44px) + 2 * var(--catalyst-toggle-switch-knob-offset, 5px) - var(--catalyst-toggle-switch-knob-size, 26px) + var(--catalyst-toggle-switch-bar-border-left-wdith, 0px) - (var(--catalyst-toggle-switch-bar-height, 16px) - var(--catalyst-toggle-switch-knob-size, 26px)) / 2 + 1px));transform:translateX(calc(var(--catalyst-toggle-switch-bar-width, 44px) + 2 * var(--catalyst-toggle-switch-knob-offset, 5px) - var(--catalyst-toggle-switch-knob-size, 26px) + var(--catalyst-toggle-switch-bar-border-left-wdith, 0px) - (var(--catalyst-toggle-switch-bar-height, 16px) - var(--catalyst-toggle-switch-knob-size, 26px)) / 2 + 1px))}:host([disabled]) #bar{background-color:#f1f3f5;background-color:var(--catalyst-toggle-switch-bar-color,#f1f3f5)}:host([disabled]) #knob{background-color:#ced4da;background-color:var(--catalyst-toggle-switch-knob-color,#f1f3f5);-webkit-box-shadow:0 2px 2px 0 rgba(0,0,0,.07),0 1px 5px 0 rgba(0,0,0,.06),0 3px 1px -2px rgba(0,0,0,.1);box-shadow:0 2px 2px 0 rgba(0,0,0,.07),0 1px 5px 0 rgba(0,0,0,.06),0 3px 1px -2px rgba(0,0,0,.1);-webkit-box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 2px 2px 0 rgba(0,0,0,.07),0 1px 5px 0 rgba(0,0,0,.06),0 3px 1px -2px rgba(0,0,0,.1));box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 2px 2px 0 rgba(0,0,0,.07),0 1px 5px 0 rgba(0,0,0,.06),0 3px 1px -2px rgba(0,0,0,.1))}:host(:focus){outline:none}:host(:focus) #knob{background-color:#fafafa;background-color:var(--catalyst-toggle-switch-knob-color,#fafafa);border:1px solid rgba(0,0,0,.16);border:var(--catalyst-toggle-switch-knob-border,solid 1px rgba(0,0,0,.16));-webkit-box-shadow:0 6px 10px 0 rgba(0,0,0,.14),0 1px 18px 0 rgba(0,0,0,.12),0 3px 5px -1px rgba(0,0,0,.4);box-shadow:0 6px 10px 0 rgba(0,0,0,.14),0 1px 18px 0 rgba(0,0,0,.12),0 3px 5px -1px rgba(0,0,0,.4);-webkit-box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 6px 10px 0 rgba(0,0,0,.14),0 1px 18px 0 rgba(0,0,0,.12),0 3px 5px -1px rgba(0,0,0,.4));box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 6px 10px 0 rgba(0,0,0,.14),0 1px 18px 0 rgba(0,0,0,.12),0 3px 5px -1px rgba(0,0,0,.4))}:host([hidden]){display:none}</style><div id="bar"><div id="knob"></div></div>`;  // eslint-disable-line quotes
+    template.innerHTML = `<style>:host{position:relative;display:inline-block;width:54px;width:calc(var(--catalyst-toggle-switch-bar-width, 44px) + 2 * var(--catalyst-toggle-switch-knob-offset, 5px));height:26px;height:calc(var(--catalyst-toggle-switch-bar-height, 16px) + 2 * var(--catalyst-toggle-switch-knob-offset, 5px));min-width:var(--catalyst-toggle-switch-bar-width,44px);min-height:var(--catalyst-toggle-switch-bar-height,16px);margin:0 8px;vertical-align:middle}#bar{position:absolute;top:5px;top:var(--catalyst-toggle-switch-knob-offset,5px);left:5px;left:var(--catalyst-toggle-switch-knob-offset,5px);width:44px;width:var(--catalyst-toggle-switch-bar-width,44px);height:16px;height:var(--catalyst-toggle-switch-bar-height,16px);cursor:pointer;background-color:#ced4da;background-color:var(--catalyst-toggle-switch-bar-color,#ced4da);border:none;border:var(--catalyst-toggle-switch-bar-border,none);border-radius:8px;border-radius:calc(var(--catalyst-toggle-switch-bar-height, 16px) / 2);-webkit-box-sizing:border-box;box-sizing:border-box;-webkit-transition:background-color .3s ease,border .3s ease;transition:background-color .3s ease,border .3s ease;will-change:background-color,border}#bar.negitive-knob-offset{top:0;left:0}#knob{position:absolute;top:-5px;top:calc(0px - var(--catalyst-toggle-switch-knob-offset, 5px) - var(--catalyst-toggle-switch-bar-border-top-wdith, 0px));left:-5px;left:calc(0px - var(--catalyst-toggle-switch-knob-offset, 5px) - var(--catalyst-toggle-switch-bar-border-left-wdith, 0px));width:26px;width:var(--catalyst-toggle-switch-knob-size,26px);height:26px;height:var(--catalyst-toggle-switch-knob-size,26px);background-color:#fff;background-color:var(--catalyst-toggle-switch-knob-color,#fff);border:1px solid rgba(0,0,0,.04);border:var(--catalyst-toggle-switch-knob-border,solid 1px rgba(0,0,0,.04));border-radius:13px;border-radius:calc(var(--catalyst-toggle-switch-knob-size, 26px) / 2);-webkit-box-shadow:0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12),0 3px 1px -2px rgba(0,0,0,.2);box-shadow:0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12),0 3px 1px -2px rgba(0,0,0,.2);-webkit-box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12),0 3px 1px -2px rgba(0,0,0,.2));box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12),0 3px 1px -2px rgba(0,0,0,.2));-webkit-box-sizing:border-box;box-sizing:border-box;-webkit-transition:width .28s ease,height .28s ease,background-color .28s ease,border .28s ease,-webkit-transform .28s ease,-webkit-box-shadow .28s cubic-bezier(.4,0,.2,1);transition:width .28s ease,height .28s ease,background-color .28s ease,border .28s ease,-webkit-transform .28s ease,-webkit-box-shadow .28s cubic-bezier(.4,0,.2,1);transition:width .28s ease,height .28s ease,background-color .28s ease,border .28s ease,transform .28s ease,box-shadow .28s cubic-bezier(.4,0,.2,1);transition:width .28s ease,height .28s ease,background-color .28s ease,border .28s ease,transform .28s ease,box-shadow .28s cubic-bezier(.4,0,.2,1),-webkit-transform .28s ease,-webkit-box-shadow .28s cubic-bezier(.4,0,.2,1);will-change:width,height,background-color,border,transform,box-shadow}#knob:hover{-webkit-box-shadow:0 3px 4px 0 rgba(0,0,0,.14),0 1px 8px 0 rgba(0,0,0,.12),0 3px 3px -2px rgba(0,0,0,.4);box-shadow:0 3px 4px 0 rgba(0,0,0,.14),0 1px 8px 0 rgba(0,0,0,.12),0 3px 3px -2px rgba(0,0,0,.4);-webkit-box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 3px 4px 0 rgba(0,0,0,.14),0 1px 8px 0 rgba(0,0,0,.12),0 3px 3px -2px rgba(0,0,0,.4));box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 3px 4px 0 rgba(0,0,0,.14),0 1px 8px 0 rgba(0,0,0,.12),0 3px 3px -2px rgba(0,0,0,.4))}:host([checked]) #knob{-webkit-transform:translateX(28px);transform:translateX(28px);-webkit-transform:translateX(calc(var(--catalyst-toggle-switch-bar-width, 44px) + 2 * var(--catalyst-toggle-switch-knob-offset, 5px) - var(--catalyst-toggle-switch-knob-size, 26px) + var(--catalyst-toggle-switch-bar-border-left-wdith, 0px)));transform:translateX(calc(var(--catalyst-toggle-switch-bar-width, 44px) + 2 * var(--catalyst-toggle-switch-knob-offset, 5px) - var(--catalyst-toggle-switch-knob-size, 26px) + var(--catalyst-toggle-switch-bar-border-left-wdith, 0px)))}:host([checked]) .negitive-knob-offset #knob{-webkit-transform:translateX(calc(var(--catalyst-toggle-switch-bar-width, 44px) + 2 * var(--catalyst-toggle-switch-knob-offset, 5px) - var(--catalyst-toggle-switch-knob-size, 26px) + var(--catalyst-toggle-switch-bar-border-left-wdith, 0px) - (var(--catalyst-toggle-switch-bar-height, 16px) - var(--catalyst-toggle-switch-knob-size, 26px)) / 2 + 1px));transform:translateX(calc(var(--catalyst-toggle-switch-bar-width, 44px) + 2 * var(--catalyst-toggle-switch-knob-offset, 5px) - var(--catalyst-toggle-switch-knob-size, 26px) + var(--catalyst-toggle-switch-bar-border-left-wdith, 0px) - (var(--catalyst-toggle-switch-bar-height, 16px) - var(--catalyst-toggle-switch-knob-size, 26px)) / 2 + 1px))}:host([disabled]) #bar{background-color:#f1f3f5;background-color:var(--catalyst-toggle-switch-bar-color,#f1f3f5)}:host([disabled]) #knob{background-color:#ced4da;background-color:var(--catalyst-toggle-switch-knob-color,#f1f3f5);-webkit-box-shadow:0 2px 2px 0 rgba(0,0,0,.07),0 1px 5px 0 rgba(0,0,0,.06),0 3px 1px -2px rgba(0,0,0,.1);box-shadow:0 2px 2px 0 rgba(0,0,0,.07),0 1px 5px 0 rgba(0,0,0,.06),0 3px 1px -2px rgba(0,0,0,.1);-webkit-box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 2px 2px 0 rgba(0,0,0,.07),0 1px 5px 0 rgba(0,0,0,.06),0 3px 1px -2px rgba(0,0,0,.1));box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 2px 2px 0 rgba(0,0,0,.07),0 1px 5px 0 rgba(0,0,0,.06),0 3px 1px -2px rgba(0,0,0,.1))}:host(:focus){outline:none}:host(:focus) #knob{background-color:#fafafa;background-color:var(--catalyst-toggle-switch-knob-color,#fafafa);border:1px solid rgba(0,0,0,.16);border:var(--catalyst-toggle-switch-knob-border,solid 1px rgba(0,0,0,.16));-webkit-box-shadow:0 6px 10px 0 rgba(0,0,0,.14),0 1px 18px 0 rgba(0,0,0,.12),0 3px 5px -1px rgba(0,0,0,.4);box-shadow:0 6px 10px 0 rgba(0,0,0,.14),0 1px 18px 0 rgba(0,0,0,.12),0 3px 5px -1px rgba(0,0,0,.4);-webkit-box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 6px 10px 0 rgba(0,0,0,.14),0 1px 18px 0 rgba(0,0,0,.12),0 3px 5px -1px rgba(0,0,0,.4));box-shadow:var(--catalyst-toggle-switch-knob-box-shadow,0 6px 10px 0 rgba(0,0,0,.14),0 1px 18px 0 rgba(0,0,0,.12),0 3px 5px -1px rgba(0,0,0,.4))}:host([hidden]){display:none}</style><div id="bar"><div id="knob"></div></div><slot></slot>`;  // eslint-disable-line quotes
 
     // If using ShadyCSS.
     if (window.ShadyCSS !== undefined) {
@@ -1507,8 +1548,22 @@ class CatalystToggleSwitch extends __WEBPACK_IMPORTED_MODULE_0__catalyst_toggle_
   /**
    * Register this class as an element.
    */
-  static register() {
-    window.customElements.define(CatalystToggleSwitch.is, CatalystToggleSwitch);
+  static _register() {
+    const doRegister = () => {
+      window.customElements.define(CatalystToggleSwitch.is, CatalystToggleSwitch);
+      CatalystToggleSwitch.__isRegistered = true;
+    };
+
+    // If not using web component polyfills or if polyfills are ready, register the element.
+    if (window.WebComponents === undefined || window.WebComponents.ready) {
+      doRegister();
+    }
+    // Otherwise wait until the polyfills are ready, then register the element.
+    else {
+      window.addEventListener('WebComponentsReady', () => {
+        doRegister();
+      });
+    }
   }
 
   /**
@@ -1537,6 +1592,8 @@ class CatalystToggleSwitch extends __WEBPACK_IMPORTED_MODULE_0__catalyst_toggle_
 
   /**
    * Fires when the element is inserted into the DOM.
+   *
+   * @protected
    */
   connectedCallback() {
     // Update the element's style.
@@ -1564,6 +1621,11 @@ class CatalystToggleSwitch extends __WEBPACK_IMPORTED_MODULE_0__catalyst_toggle_
       this._bar.classList.add('negitive-knob-offset');
     }
   }
+}
+
+// Register the element if it is not already registered.
+if (!CatalystToggleSwitch._isRegistered) {
+  CatalystToggleSwitch._register();
 }
 
 // Export the element.
