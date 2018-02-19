@@ -112,7 +112,7 @@ class CatalystToggleButton extends HTMLElement {
    * @returns {boolean}
    */
   static get _isRegistered() {
-    return !!CatalystToggleButton.__isRegistered;
+    return window.customElements !== undefined && window.customElements.get(CatalystToggleButton.is) !== undefined;
   }
 
   /**
@@ -167,7 +167,6 @@ class CatalystToggleButton extends HTMLElement {
   static _register() {
     const doRegister = () => {
       window.customElements.define(CatalystToggleButton.is, CatalystToggleButton);
-      CatalystToggleButton.__isRegistered = true;
     };
 
     // If not using web component polyfills or if polyfills are ready, register the element.
@@ -685,7 +684,7 @@ class CatalystFlipButton extends HTMLElement {
    * @returns {boolean}
    */
   static get _isRegistered() {
-    return !!CatalystFlipButton.__isRegistered;
+    return window.customElements !== undefined && window.customElements.get(CatalystFlipButton.is) !== undefined;
   }
 
   /**
@@ -747,7 +746,6 @@ class CatalystFlipButton extends HTMLElement {
   static _register() {
     const doRegister = () => {
       window.customElements.define(CatalystFlipButton.is, CatalystFlipButton);
-      CatalystFlipButton.__isRegistered = true;
     };
 
     // If not using web component polyfills or if polyfills are ready, register the element.
@@ -1524,7 +1522,7 @@ class CatalystToggleSwitch extends __WEBPACK_IMPORTED_MODULE_0__catalyst_toggle_
    * @returns {boolean}
    */
   static get _isRegistered() {
-    return !!CatalystToggleSwitch.__isRegistered;
+    return window.customElements !== undefined && window.customElements.get(CatalystToggleSwitch.is) !== undefined;
   }
 
   /**
@@ -1551,7 +1549,6 @@ class CatalystToggleSwitch extends __WEBPACK_IMPORTED_MODULE_0__catalyst_toggle_
   static _register() {
     const doRegister = () => {
       window.customElements.define(CatalystToggleSwitch.is, CatalystToggleSwitch);
-      CatalystToggleSwitch.__isRegistered = true;
     };
 
     // If not using web component polyfills or if polyfills are ready, register the element.

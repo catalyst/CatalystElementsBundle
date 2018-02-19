@@ -1,23 +1,20 @@
-// Path to the source files.
-const srcPath = './src';
+/* eslint-env node */
 
-// Path to output distribution files.
-const distPath = './dist';
+// The name of the element.
+const tagName = 'catalyst-flip-button';
 
-// Path to output tmp files.
-const tmpPath = './tmp';
-
-// Path to output the docs too.
-const docsPath = './docs';
-
-// Path to the CatalystElements.
-const catalystElementsPath = './node_modules/@catalyst-elements'
-
-// The name of the bundle.
-const bundleName = 'catalyst-elements';
+// The name of the class.
+const className = 'CatalystFlipButton';
 
 // The name of the analysis file.
 const analysisFilename = 'analysis';
+
+// Paths.
+const srcPath = './src';
+const distPath = './dist';
+const tmpPath = './tmp';
+const docsPath = './docs';
+const demoPath = './demo';
 
 // Libraries.
 const gulp = require('gulp');
@@ -26,34 +23,30 @@ const analyzer = Analyzer.createForDirectory('./');
 const Builder = require('polymer-build').PolymerProject;
 const del = require('del');
 const closureCompiler = require('google-closure-compiler').gulp();
-const concat = require('gulp-concat');
 const escodegen = require('escodegen');
+const eslint = require('gulp-eslint');
 const esprima = require('esprima');
 const file = require('gulp-file');
 const foreach = require('gulp-foreach');
-const fs = require('graceful-fs');
+const fs = require('graceful-fs')
 const globby = require('globby');
+const htmlExtract = require('gulp-html-extract');
+const htmlmin = require('gulp-htmlmin');
 const inject = require('gulp-inject');
 const mergeStream = require('merge-stream');
 const modifyFile = require('gulp-modify-file');
 const named = require('vinyl-named');
 const path = require('path');
+const replace = require('gulp-replace');
+const postcss = require('gulp-postcss');
 const rename = require('gulp-rename');
-const stripComments = require('gulp-strip-comments');
+const sass = require('gulp-sass');
+const sassLint = require('gulp-sass-lint');
 const through = require('through2');
 const webpack = require('webpack');
 const webpackStream = require('webpack-stream');
 
-/**
- * Convert a class name to an element name.
- *
- * Eg: Foo.BarBaz --> bar-baz
- *
- * @param {string} className
- */
-function classNameToElementName(className) {
-  return className.substring(className.lastIndexOf('.') + 1).split(/(?=[A-Z])/).join('-').toLowerCase();
-}
+let packageInfo = JSON.parse(fs.readFileSync('./package.json'));
 
 /**
  * Fix issues with the automatically generated analysis.
@@ -72,22 +65,10 @@ function fixAnalysis(analysis) {
           // For each element.
           for (let j = 0; j < analysis.namespaces[i].elements.length; j++) {
 
-            // If the element's tag name is not set, set it.
-            if (analysis.namespaces[i].elements[j].tagname === undefined) {
-              analysis.namespaces[i].elements[j].tagname = classNameToElementName(analysis.namespaces[i].elements[j].name);
+            // If the element's tag name is not set for this element, set it.
+            if (analysis.namespaces[i].elements[j].tagname === undefined && analysis.namespaces[i].elements[j].name.endsWith(className)) {
+              analysis.namespaces[i].elements[j].tagname = tagName;
             }
-
-            // If `demos` is defined.
-            if (analysis.namespaces[i].elements[j].demos) {
-              // For each demo.
-              for (let k = 0; k < analysis.namespaces[i].elements[j].demos.length; k++) {
-                // Prefix its url.
-                analysis.namespaces[i].elements[j].demos[k].url = `../${analysis.namespaces[i].elements[j].tagname}/${analysis.namespaces[i].elements[j].demos[k].url}`;
-              }
-            }
-
-            // Change the path.
-            analysis.namespaces[i].elements[j].path = `dist/${bundleName}.js`;
 
             // If `events` is defined
             if (analysis.namespaces[i].elements[j].events) {
@@ -114,7 +95,132 @@ function fixAnalysis(analysis) {
  * @param {File} file
  */
 function transformGetFileContents(filePath, file) {
-  return file.contents.toString('utf8');
+  return file.contents.toString('utf8')
+}
+
+/**
+ * Create the element module file.
+ */
+function createElementModule() {
+  return gulp.src(`${srcPath}/element.js`)
+    .pipe(modifyFile((content) => {
+      content = content.replace(/\.\.\/node_modules\/@catalyst-elements\//g, '../../');
+      return content;
+    }))
+    .pipe(rename({
+      basename: tagName,
+      extname: '.module.js'
+    }))
+    .pipe(gulp.dest(tmpPath));
+}
+
+/**
+ * Create the element file.
+ */
+function createElement() {
+  return gulp.src(`${srcPath}/element.js`)
+    .pipe(modifyFile((content) => {
+      // Parse the code.
+      let parsed = esprima.parseModule(content, {
+        raw: true,
+        tokens: true,
+        range: true,
+        comment: true
+      });
+
+      // Attached the comments to the parsed code.
+      parsed = escodegen.attachComments(parsed, parsed.comments, parsed.tokens);
+
+      // Get info about the code.
+      let codeIndexesToRemove = [];
+      let catalystImports = {};
+      for (let i = 0; i < parsed.body.length; i++) {
+        switch (parsed.body[i].type) {
+          case 'ImportDeclaration':
+            for (let j = 0; j < parsed.body[i].specifiers.length; j++) {
+              if ((parsed.body[i].specifiers[j].type === 'ImportDefaultSpecifier' && parsed.body[i].specifiers[j].local.name.startsWith('Catalyst')) ||
+                  (parsed.body[i].specifiers[j].type === 'ImportSpecifier'        && parsed.body[i].specifiers[j].imported.name.startsWith('Catalyst'))) {
+                catalystImports[i] = parsed.body[i];
+                codeIndexesToRemove.push(i);
+              }
+            }
+            break;
+
+          case 'ExportNamedDeclaration':
+            codeIndexesToRemove.push(i);
+            break;
+        }
+      }
+
+      // Remove imports and exports.
+      parsed.body = parsed.body.filter((e, i) => !codeIndexesToRemove.includes(i));
+
+      // Replace catalyst element's imports with globally accessible object import.
+      for (let i in catalystImports) {
+        for (let j = catalystImports[i].specifiers.length - 1; j >=0 ; j--) {
+          let localName = catalystImports[i].specifiers[j].local.name;
+          let importedName = catalystImports[i].specifiers[j].imported ? catalystImports[i].specifiers[j].imported.name : localName;
+
+          if (importedName.startsWith('Catalyst')) {
+            parsed.body.splice(i, 0, esprima.parseScript(`let ${localName} = window.CatalystElements.${importedName};`));
+          }
+        }
+      }
+
+      // Generate the updated code.
+      content = escodegen.generate(parsed, {
+        format: {
+          indent: {
+            style: '  ',
+            base: 2,
+            adjustMultilineComment: true
+          },
+          quotes: 'single'
+        },
+        comment: true,
+      });
+
+      return `(() => {
+  /**
+   * Namespace for all the Catalyst Elements.
+   *
+   * @namespace CatalystElements
+   */
+  window.CatalystElements = window.CatalystElements || {};
+${content}
+    // Make the class globally accessible under the \`CatalystElements\` object.
+    window.CatalystElements.${className} = ${className};
+})();`;
+    }))
+    .pipe(rename({
+      basename: tagName,
+      extname: '.js'
+    }))
+    .pipe(gulp.dest(tmpPath));
+}
+
+/**
+ * Inject the template into the element.
+ *
+ * @param {Boolean} forModule
+ */
+function injectTemplate(forModule) {
+  return gulp.src(forModule ? `${tmpPath}/${tagName}.module.js` : `${tmpPath}/${tagName}.js`)
+    // Inject the template html.
+    .pipe(inject(gulp.src(`${tmpPath}/template.html`), {
+      starttag: '[[inject:template]]',
+      endtag: '[[endinject]]',
+      removeTags: true,
+      transform: transformGetFileContents
+    }))
+    // Inject the style css.
+    .pipe(inject(gulp.src(`${tmpPath}/style.css`), {
+      starttag: '[[inject:style]]',
+      endtag: '[[endinject]]',
+      removeTags: true,
+      transform: transformGetFileContents
+    }))
+    .pipe(gulp.dest(distPath));
 }
 
 // Workaround for: https://github.com/google/closure-compiler/issues/2182
@@ -148,26 +254,63 @@ function adjustWebpackBuildForClosureCompiler() {
   });
 }
 
-// Get all the static imports in a JS file.
-function getStaticImports(js) {
-  let parsed = esprima.parseModule(js);
-  let imports = [];
+// Lint JS
+gulp.task('lint:js', () => {
+  return gulp.src([
+      '*.js',
+      'src/**/*.js',
+      'test/**/*.js',
+      'demo/**/*.js'
+    ])
+    .pipe(eslint())
+    .pipe(eslint.format())
+    .pipe(eslint.failOnError());
+});
 
-  // Get all the imports
-  for (let i = 0; i < parsed.body.length; i++) {
-    if (parsed.body[i].type === 'ImportDeclaration') {
-      for (let j = 0; j < parsed.body[i].specifiers.length; j++) {
-        if (parsed.body[i].specifiers[j].type === 'ImportSpecifier') {
-          if (parsed.body[i].specifiers[j].local.type === 'Identifier') {
-            imports.push(parsed.body[i].specifiers[j].local.name);
-          }
-        }
-      }
-    }
-  }
+// Lint JS in HTML
+gulp.task('lint:js-html', () => {
+  return gulp.src([
+      '*.html',
+      'src/**/*.html',
+      'test/**/*.html',
+      'demo/**/*.html'
+    ])
+    .pipe(htmlExtract({
+      sel: 'script',
+      strip: true
+    }))
+    .pipe(eslint())
+    .pipe(eslint.format())
+    .pipe(eslint.failOnError());
+});
 
-  return imports;
-}
+// Lint SCSS
+gulp.task('lint:scss', () => {
+  return gulp.src('src/**/*.scss')
+    .pipe(sassLint())
+    .pipe(sassLint.format())
+    .pipe(sassLint.failOnError())
+});
+
+// Lint the project
+gulp.task('lint', gulp.parallel('lint:js', 'lint:js-html', 'lint:scss'));
+
+// Minify HTML.
+gulp.task('html-min', () => {
+  return gulp.src(`${srcPath}/**/*.html`)
+    .pipe(htmlmin({collapseWhitespace: true}))
+    .pipe(replace('\n', ''))
+    .pipe(gulp.dest(tmpPath));
+});
+
+// Compile Sass.
+gulp.task('sass-compile', () => {
+  return gulp.src(`${srcPath}/**/*.scss`)
+    .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
+    .pipe(postcss())
+    .pipe(replace('\n', ''))
+    .pipe(gulp.dest(tmpPath));
+});
 
 // Clean the dist path.
 gulp.task('clean-dist', (done) => {
@@ -184,85 +327,58 @@ gulp.task('clean-docs', (done) => {
   del(docsPath).then(() => { done(); });
 });
 
-// Build the components with comments for analysis.
-// Note: HTML and CSS are not inject.
-gulp.task('build-for-analysis', () => {
-  return gulp.src([`${catalystElementsPath}/*/dist/*.js`, '!**/*.min*', '!**/*.es5*', '!**/*.module*'])
-    .pipe(concat(`${bundleName}-analysis.js`))
-    .pipe(gulp.dest(tmpPath));
+gulp.task('create-element:module', () => {
+  return createElementModule();
+});
+
+gulp.task('create-element', () => {
+  return createElement();
+});
+
+gulp.task('inject:template:module', () => {
+  return injectTemplate(true);
+});
+
+gulp.task('inject:template', () => {
+  return injectTemplate(false);
 });
 
 // Build the module version of the components.
-gulp.task('build-module', () => {
-  return gulp.src(`${srcPath}/${bundleName}.js`)
-    .pipe(stripComments())
-    .pipe(modifyFile((content) => {
-      let imports = getStaticImports(content);
-
-      content = content.replace(/\.\.\/node_modules\/@catalyst-elements\//g, '../../');
-
-      // Add a comment to the top of the file.
-      content = '// Import the catalyts elements.\n' + content;
-
-      // Export all the things.
-      content = content + '\n// Export all the catalyst elements.\n';
-      content = content + 'export {\n  ' + imports.join(',\n  ') + '\n};\n'
-
-      return content;
-    }))
-    .pipe(rename({
-      basename: bundleName,
-      extname: '.module.js'
-    }))
-    .pipe(gulp.dest(distPath));
-});
+gulp.task('build-es6-module', gulp.series('create-element:module', gulp.parallel('html-min', 'sass-compile'), 'inject:template:module'));
 
 // Build the es6 version of the components.
-gulp.task('build-es6', () => {
-    return gulp.src(`${srcPath}/${bundleName}.js`)
-    .pipe(webpackStream({
-      target: 'web'
-    }, webpack))
-    .pipe(rename({
-      basename: bundleName,
-      extname: '.js'
-    }))
-    .pipe(gulp.dest(distPath));
-});
+gulp.task('build-es6', gulp.series('create-element', gulp.parallel('html-min', 'sass-compile'), 'inject:template'));
 
-// Build the minified es6 version of the components.
+// Build the minified es6 version of the component.
 gulp.task('build-es6-min', () => {
-  return gulp.src(`${distPath}/${bundleName}.js`)
-    .pipe(adjustWebpackBuildForClosureCompiler())
+  return gulp.src(`${distPath}/${tagName}.js`)
     .pipe(closureCompiler({
       compilation_level: 'SIMPLE_OPTIMIZATIONS',
       warning_level: 'QUIET',
       language_in: 'ECMASCRIPT6_STRICT',
       language_out: 'ECMASCRIPT6_STRICT',
-      output_wrapper: '(()=>{%output%}).call(this)',
-      js_output_file: `${bundleName}.min.js`
+      output_wrapper: '(()=>{%output%})()',
+      js_output_file: `${tagName}.min.js`
     }))
     .pipe(gulp.dest(distPath));
 });
 
-// Build the minified es5 version of the components.
+// Build the minified es5 version of the component.
 gulp.task('build-es5-min', () => {
-  return gulp.src(`${distPath}/${bundleName}.js`)
-    .pipe(adjustWebpackBuildForClosureCompiler())
+  return gulp.src(`${distPath}/${tagName}.js`)
     .pipe(closureCompiler({
       compilation_level: 'SIMPLE_OPTIMIZATIONS',
       warning_level: 'QUIET',
       language_in: 'ECMASCRIPT6_STRICT',
       language_out: 'ECMASCRIPT5_STRICT',
       output_wrapper: '(function(){%output%}).call(this)',
-      js_output_file: `${bundleName}.es5.min.js`
+      js_output_file: `${tagName}.es5.min.js`
     }))
     .pipe(gulp.dest(distPath));
 });
-
 // Analyze the elements file.
 gulp.task('create-analysis', () => {
-  return analyzer.analyze([`${tmpPath}/${bundleName}-analysis.js`]).then((analysis) => {
+  return analyzer.analyze([`${distPath}/${tagName}.js`]).then((analysis) => {
     let analysisFileContents = JSON.stringify(fixAnalysis(generateAnalysis(analysis, analyzer.urlResolver)));
     return file(`${analysisFilename}.json`, analysisFileContents, { src: true })
       .pipe(gulp.dest('./'));
@@ -279,6 +395,8 @@ gulp.task('docs-clone-dependencies', gulp.series(() => {
     'analysis.json',
     'docs-build-config.json'
   ]).pipe(gulp.dest(`${tmpPath}`));
+}, () => {
+  return gulp.src([`${distPath}/**`, `${demoPath}/**`], { base: './' }).pipe(gulp.dest(`${tmpPath}/scripts/${packageInfo.name}/`));
 }));
 
 // Update analysis.
@@ -293,7 +411,7 @@ gulp.task('docs-update-analysis', gulp.series(() => {
               for (let j = 0; j < analysis.namespaces[i].elements.length; j++) {
                 if (analysis.namespaces[i].elements[j].demos) {
                   for (let k = 0; k < analysis.namespaces[i].elements[j].demos.length; k++) {
-                    analysis.namespaces[i].elements[j].demos[k].url = path.normalize(`scripts/@catalyst-elements/dummy/${analysis.namespaces[i].elements[j].demos[k].url}`);
+                    analysis.namespaces[i].elements[j].demos[k].url = `scripts/${packageInfo.name}/${analysis.namespaces[i].elements[j].demos[k].url}`;
                   }
                 }
               }
@@ -367,7 +485,7 @@ gulp.task('docs-build-imports', gulp.series(() => {
 
 // Build the demos.
 gulp.task('docs-build-demos', gulp.series(() => {
-  return gulp.src(`${tmpPath}/scripts/@catalyst-elements/*/demo/**/*.html`, { base: './' })
+  return gulp.src(`${tmpPath}/scripts/${packageInfo.name}/demo/**/*.html`, { base: './' })
     .pipe(foreach(function(stream, file) {
       let relPath = path.relative(path.join(file.cwd, file.base), file.path);
       let dir = path.dirname(relPath);
@@ -392,7 +510,7 @@ gulp.task('docs-build-demos', gulp.series(() => {
         .pipe(gulp.dest('./'));
     }));
 }, () => {
-  return gulp.src(`${tmpPath}/scripts/@catalyst-elements/*/demo/*.html`, { base: './' })
+  return gulp.src(`${tmpPath}/scripts/${packageInfo.name}/demo/*.html`, { base: './' })
     .pipe(modifyFile((content) => {
       return content.replace(/<script type="module"/g, '<script');
     }))
@@ -456,7 +574,7 @@ gulp.task('docs-generate', gulp.series(async () => {
 }));
 
 // Build all the components' versions.
-gulp.task('build', gulp.series('clean-dist', gulp.parallel('build-module', 'build-es6'), gulp.parallel('build-es6-min', 'build-es5-min'), 'clean-tmp'));
+gulp.task('build', gulp.series('clean-dist', gulp.parallel('build-es6-module', 'build-es6'), gulp.parallel('build-es6-min', 'build-es5-min')));
 
 // Build the docs for all the components' versions.
 gulp.task('build-docs', gulp.series(
@@ -471,7 +589,7 @@ gulp.task('build-docs', gulp.series(
   'clean-tmp'));
 
 // Analyze all the components.
-gulp.task('analyze', gulp.series('build-for-analysis', 'create-analysis', 'clean-tmp'));
+gulp.task('analyze', gulp.series('build-es6', 'create-analysis', 'clean-tmp'));
 
 // Default task.
-gulp.task('default', gulp.series('build'));
+gulp.task('default', gulp.series('build', 'clean-tmp'));

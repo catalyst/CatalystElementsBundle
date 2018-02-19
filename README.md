@@ -66,6 +66,19 @@ Install dependencies with:
 yarn
 ```
 
+### Viewing the bundle
+
+First analyze the projcet then start up the included local webserver:
+
+```sh
+yarn run analyze
+yarn run serve
+```
+
+Then visit http://127.0.0.1:8081/components/@catalyst-elements/bundle to load up un unbuilt version of the docs.
+
+Please note that as this is an unbuild version of the docs, not all browser will be able to view the page. To view the built version of the docs see [Docs](#docs)
+
 ### Adding New Elements to this Bundle
 
 In the `package.json` file, add the element as a dependency.
@@ -123,13 +136,19 @@ yarn run build
 
 Docs are build with [Polymer](https://www.polymer-project.org/), the [Polymer Build Tool](https://github.com/Polymer/polymer-build) and the [Polymer Analyzer](https://github.com/Polymer/polymer-analyzer).
 
-To build the docs, first run the analyzer which will update `./analysis.json`. The docs are then built from this file.
+To build the docs, first run the analyzer which will update `./analysis.json`. This file contains all the infomation about the bundle the docs will use.
 
 ```sh
 yarn run analyze
 yarn run build-docs
 ```
 
-The docs will be located under `./docs/`.
+The docs are located under `./docs/`.
 
-In order to view the docs in a web browser, the files need to be served from a web server (they cannot be open using the `file:///` protocall).
+To view the docs locally, first start up a local webserver:
+
+```sh
+yarn run serve
+```
+
+Then visit http://127.0.0.1:8081/docs/
