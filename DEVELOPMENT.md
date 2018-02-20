@@ -3,8 +3,9 @@
 ## Getting the code
 
 1. Fork the repo.
-2. Install [Node](https://nodejs.org/en/download/). It comes bundled with [yarn](https://yarnpkg.com/).
-3. Install the [dependencies](#dependencies)
+2. Clone your fork.
+3. Install [Node](https://nodejs.org/en/download/). It comes bundled with [yarn](https://yarnpkg.com/).
+4. Install the [dependencies](#dependencies)
 
 ## Dependencies
 
@@ -33,7 +34,7 @@ Please note that as this is an unbuild version of the docs, not all browser will
 
 In the `package.json` file, add the element as a dependency.
 
-The element's key should be in the form `@catalyst-elements/element-name`.  
+The element's key should be in the form `@catalyst-elements/element-name`.
 (Follow the same pattern that the other elements use).
 
 In the `src/catalyst-elements.js` file, import the element with `import { Element } from ...` - Do not use `import * as ...`.
