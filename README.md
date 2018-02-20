@@ -56,6 +56,6 @@ See details on the wiki: [Browser Compatibility](https://github.com/catalyst/Cat
 
 ## Contributions
 
-Contributions are most welcome.
+Contributions are most welcome. Please read our [contributing guidelines](CONTRIBUTING.md) first.
 
 Contribution for a particular element should be made on that element's repo.
