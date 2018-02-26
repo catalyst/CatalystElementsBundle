@@ -3,6 +3,8 @@
 [![David](https://img.shields.io/david/catalyst/CatalystElements.svg?style=flat-square)](https://david-dm.org/catalyst/CatalystElements)
 [![David](https://img.shields.io/david/dev/catalyst/CatalystElements.svg?style=flat-square)](https://david-dm.org/catalyst/CatalystElements?type=dev)
 [![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg?style=flat-square)](https://www.webcomponents.org/collection/catalyst/CatalystElements)
+[![npm (scoped)](https://img.shields.io/npm/v/@catalyst-elements/bundle.svg?style=flat-square)](https://www.npmjs.com/package/@catalyst-elements/bundle)
+[![Bower not supported](https://img.shields.io/badge/bower-not_supported-red.svg?style=flat-square)]()
 [![Polymer 2 not supported](https://img.shields.io/badge/Polymer_2-not_supported-red.svg?style=flat-square)]()
 [![Polymer 3 support pending](https://img.shields.io/badge/Polymer_3-support_pending-yellow.svg?style=flat-square)]()
 
@@ -30,6 +32,8 @@ Install with yarn:
 yarn add @catalyst-elements/bundle
 ```
 
+Please note that this package is not compatible with Bower.
+
 ## Usage
 
 ### As a Module (Recommend)
@@ -49,6 +53,8 @@ Import the Catalyst Element's bundle on each page that uses one or more catalyst
 ```html
 <script src="node_modules/@catalyst-elements/bundle/dist/catalyst-elements.js"></script>
 ```
+
+All included elements will now be available for use - see release notes for details on which elements are included in the bundle.
 
 ## Browser Compatibility
 
