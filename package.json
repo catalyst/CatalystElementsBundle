@@ -31,9 +31,9 @@
     "postinstall": "scripts/fix-dependencies.sh"
   },
   "dependencies": {
-    "@catalyst-elements/catalyst-flip-button": "^0.6.2",
-    "@catalyst-elements/catalyst-toggle-button": "^0.5.2",
-    "@catalyst-elements/catalyst-toggle-switch": "^0.4.2"
+    "@catalyst-elements/catalyst-flip-button": "^0.7.0",
+    "@catalyst-elements/catalyst-toggle-button": "^0.6.0",
+    "@catalyst-elements/catalyst-toggle-switch": "^0.5.0"
   },
   "devDependencies": {
     "@polymer/iron-component-page": "^3.0.0-pre.1",
@@ -42,11 +42,9 @@
     "@webcomponents/webcomponentsjs": "^1.0.20",
     "babel-eslint": "^8.2.1",
     "del": "^3.0.0",
-    "escodegen": "^1.9.0",
     "eslint": "^4.15.0",
     "esprima": "^4.0.0",
     "globby": "^8.0.1",
-    "google-closure-compiler": "^20180204.0.0",
     "graceful-fs": "^4.1.11",
     "gulp": "^4.0.0",
     "gulp-concat": "^2.6.1",
@@ -58,13 +56,14 @@
     "gulp-strip-comments": "^2.5.2",
     "marked": "^0.3.12",
     "merge-stream": "^1.0.1",
-    "polymer-analyzer": "^v3.0.0-pre.7",
+    "polymer-analyzer": "^v3.0.0-pre.12",
     "polymer-build": "^2.1.1",
-    "polyserve": "^0.23.0",
+    "polyserve": "^0.24.0",
     "prismjs": "^1.11.0",
     "through2": "^2.0.3",
     "vinyl-named": "^1.1.0",
-    "webpack": "^3.10.0",
+    "webpack": "^4.0.1",
+    "webpack-closure-compiler": "^2.1.6",
     "webpack-stream": "^4.0.0"
   },
   "engines": {

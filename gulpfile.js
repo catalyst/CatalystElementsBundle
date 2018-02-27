@@ -25,9 +25,7 @@ const {Analyzer, generateAnalysis} = require('polymer-analyzer');
 const analyzer = Analyzer.createForDirectory('./');
 const Builder = require('polymer-build').PolymerProject;
 const del = require('del');
-const closureCompiler = require('google-closure-compiler').gulp();
 const concat = require('gulp-concat');
-const escodegen = require('escodegen');
 const esprima = require('esprima');
 const file = require('gulp-file');
 const foreach = require('gulp-foreach');
@@ -42,6 +40,7 @@ const rename = require('gulp-rename');
 const stripComments = require('gulp-strip-comments');
 const through = require('through2');
 const webpack = require('webpack');
+const webpackClosureCompilerPlugin = require('webpack-closure-compiler');
 const webpackStream = require('webpack-stream');
 
 /**
@@ -61,44 +60,17 @@ function classNameToElementName(className) {
  * * @param {object} analysis
  */
 function fixAnalysis(analysis) {
-  // If `namespaces` is defined.
-  if (analysis.namespaces) {
-    for (let i = 0; i < analysis.namespaces.length; i++) {
-      // For the `CatalystElements` namespace.
-      if (analysis.namespaces[i].name === 'CatalystElements') {
+  // If `elements` is defined.
+  if (analysis.elements) {
+    // For each element.
+    for (let i = 0; i < analysis.elements.length; i++) {
 
-        // If `elements` is defined.
-        if (analysis.namespaces[i].elements) {
-          // For each element.
-          for (let j = 0; j < analysis.namespaces[i].elements.length; j++) {
-
-            // If the element's tag name is not set, set it.
-            if (analysis.namespaces[i].elements[j].tagname === undefined) {
-              analysis.namespaces[i].elements[j].tagname = classNameToElementName(analysis.namespaces[i].elements[j].name);
-            }
-
-            // If `demos` is defined.
-            if (analysis.namespaces[i].elements[j].demos) {
-              // For each demo.
-              for (let k = 0; k < analysis.namespaces[i].elements[j].demos.length; k++) {
-                // Prefix its url.
-                analysis.namespaces[i].elements[j].demos[k].url = `../${analysis.namespaces[i].elements[j].tagname}/${analysis.namespaces[i].elements[j].demos[k].url}`;
-              }
-            }
-
-            // Change the path.
-            analysis.namespaces[i].elements[j].path = `dist/${bundleName}.js`;
-
-            // If `events` is defined
-            if (analysis.namespaces[i].elements[j].events) {
-              // For each event.
-              for (let k = 0; k < analysis.namespaces[i].elements[j].events.length; k++) {
-                // Fix up event descriptions.
-                // Remove the name of the event from the beginning of its description.
-                analysis.namespaces[i].elements[j].events[k].description = analysis.namespaces[i].elements[j].events[k].description.replace(new RegExp('^' + analysis.namespaces[i].elements[j].events[k].name), '').trim();
-              }
-            }
-          }
+      // If `demos` is defined.
+      if (analysis.elements[i].demos) {
+        // For each demo.
+        for (let j = 0; j < analysis.elements[i].demos.length; j++) {
+          // Prefix its url.
+          analysis.elements[i].demos[j].url = `../${analysis.elements[i].tagname}/${analysis.elements[i].demos[j].url}`;
         }
       }
     }
@@ -115,37 +87,6 @@ function fixAnalysis(analysis) {
  */
 function transformGetFileContents(filePath, file) {
   return file.contents.toString('utf8');
-}
-
-// Workaround for: https://github.com/google/closure-compiler/issues/2182
-function adjustWebpackBuildForClosureCompiler() {
-  return modifyFile((content) => {
-    let parsed = esprima.parseModule(content, {}, (node) => {
-      if (Array.isArray(node.body)) {
-        let toInsert = {};
-        for (let i = 0; i < node.body.length; i++) {
-          if (node.body[i].type === 'ClassDeclaration') {
-            // Extends webpack module?
-            if (node.body[i].superClass !== null && node.body[i].superClass.type === 'MemberExpression' && node.body[i].superClass.object && node.body[i].superClass.object.name.startsWith('__WEBPACK_IMPORTED_MODULE_')) {
-              let workaroundVarName = `workaround_var${node.body[i].superClass.object.name}`;
-              toInsert[i] = esprima.parseScript(`let ${workaroundVarName} = ${node.body[i].superClass.object.name}[${node.body[i].superClass.property.raw}];`);
-
-              node.body[i].superClass = {
-                type: 'Identifier',
-                name: workaroundVarName
-              };
-            }
-          }
-        }
-        for (let i in toInsert) {
-          node.body.splice(i, 0, toInsert[i]);
-        }
-      }
-    });
-    content = escodegen.generate(parsed);
-
-    return content;
-  });
 }
 
 // Get all the static imports in a JS file.
@@ -187,12 +128,12 @@ gulp.task('clean-docs', (done) => {
 // Build the components with comments for analysis.
 // Note: HTML and CSS are not inject.
 gulp.task('build-for-analysis', () => {
-  return gulp.src([`${catalystElementsPath}/*/dist/*.js`, '!**/*.min*', '!**/*.es5*', '!**/*.module*'])
+  return gulp.src([`${catalystElementsPath}/*/dist/*.js`, '!**/*.min*'])
     .pipe(concat(`${bundleName}-analysis.js`))
     .pipe(gulp.dest(tmpPath));
 });
 
-// Build the module version of the components.
+// Build the es6 module version of the components.
 gulp.task('build-module', () => {
   return gulp.src(`${srcPath}/${bundleName}.js`)
     .pipe(stripComments())
@@ -212,51 +153,33 @@ gulp.task('build-module', () => {
     }))
     .pipe(rename({
       basename: bundleName,
-      extname: '.module.js'
-    }))
-    .pipe(gulp.dest(distPath));
-});
-
-// Build the es6 version of the components.
-gulp.task('build-es6', () => {
-    return gulp.src(`${srcPath}/${bundleName}.js`)
-    .pipe(webpackStream({
-      target: 'web'
-    }, webpack))
-    .pipe(rename({
-      basename: bundleName,
       extname: '.js'
     }))
     .pipe(gulp.dest(distPath));
 });
 
-// Build the minified es6 version of the components.
-gulp.task('build-es6-min', () => {
-  return gulp.src(`${distPath}/${bundleName}.js`)
-    .pipe(adjustWebpackBuildForClosureCompiler())
-    .pipe(closureCompiler({
-      compilation_level: 'SIMPLE_OPTIMIZATIONS',
-      warning_level: 'QUIET',
-      language_in: 'ECMASCRIPT6_STRICT',
-      language_out: 'ECMASCRIPT6_STRICT',
-      output_wrapper: '(()=>{%output%}).call(this)',
-      js_output_file: `${bundleName}.min.js`
-    }))
-    .pipe(gulp.dest(distPath));
-});
-
-// Build the minified es5 version of the components.
-gulp.task('build-es5-min', () => {
-  return gulp.src(`${distPath}/${bundleName}.js`)
-    .pipe(adjustWebpackBuildForClosureCompiler())
-    .pipe(closureCompiler({
-      compilation_level: 'SIMPLE_OPTIMIZATIONS',
-      warning_level: 'QUIET',
-      language_in: 'ECMASCRIPT6_STRICT',
-      language_out: 'ECMASCRIPT5_STRICT',
-      output_wrapper: '(function(){%output%}).call(this)',
-      js_output_file: `${bundleName}.es5.min.js`
-    }))
+// Build the es5 script version of the components.
+gulp.task('build-script', () => {
+    return gulp.src(`${srcPath}/${bundleName}.js`)
+    .pipe(webpackStream({
+      target: 'web',
+      mode: 'production',
+      output: {
+        chunkFilename: `${bundleName}.[id].es5.min.js`,
+        filename: `${bundleName}.es5.min.js`
+      },
+      plugins: [
+        new webpackClosureCompilerPlugin({
+          compiler: {
+            language_in: 'ECMASCRIPT6',
+            language_out: 'ECMASCRIPT5',
+            compilation_level: 'SIMPLE',
+            assume_function_wrapper: true,
+            output_wrapper: '(function(){%output%}).call(this)'
+          }
+        })
+      ]
+    }, webpack))
     .pipe(gulp.dest(distPath));
 });
 
@@ -286,17 +209,11 @@ gulp.task('docs-update-analysis', gulp.series(() => {
   return gulp.src(`${tmpPath}/analysis.json`, { base: './' })
     .pipe(modifyFile((content) => {
       let analysis = JSON.parse(content);
-      if (analysis.namespaces) {
-        for (let i = 0; i < analysis.namespaces.length; i++) {
-          if (analysis.namespaces[i].name === 'CatalystElements') {
-            if (analysis.namespaces[i].elements) {
-              for (let j = 0; j < analysis.namespaces[i].elements.length; j++) {
-                if (analysis.namespaces[i].elements[j].demos) {
-                  for (let k = 0; k < analysis.namespaces[i].elements[j].demos.length; k++) {
-                    analysis.namespaces[i].elements[j].demos[k].url = path.normalize(`scripts/@catalyst-elements/dummy/${analysis.namespaces[i].elements[j].demos[k].url}`);
-                  }
-                }
-              }
+      if (analysis.elements) {
+        for (let i = 0; i < analysis.elements.length; i++) {
+          if (analysis.elements[i].demos) {
+            for (let j = 0; j < analysis.elements[i].demos.length; j++) {
+              analysis.elements[i].demos[j].url = path.normalize(`scripts/@catalyst-elements/dummy/${analysis.elements[i].demos[j].url}`);
             }
           }
         }
@@ -341,20 +258,25 @@ gulp.task('docs-build-imports', gulp.series(() => {
     .pipe(named())
     .pipe(webpackStream({
       target: 'web',
+      mode: 'production',
       output: {
         chunkFilename: 'docs-imports.[id].js',
         filename: 'docs-imports.js'
-      }
+      },
+      plugins: [
+        new webpackClosureCompilerPlugin({
+          compiler: {
+            language_in: 'ECMASCRIPT6',
+            language_out: 'ECMASCRIPT5',
+            compilation_level: 'SIMPLE',
+            assume_function_wrapper: true,
+            output_wrapper: '(function(){%output%}).call(this)'
+          }
+        })
+      ]
     }, webpack))
     .pipe(foreach(function(stream, file) {
       return stream
-        .pipe(adjustWebpackBuildForClosureCompiler())
-        .pipe(closureCompiler({
-          compilation_level: 'SIMPLE_OPTIMIZATIONS',
-          warning_level: 'QUIET',
-          language_in: 'ECMASCRIPT6_STRICT',
-          language_out: 'ECMASCRIPT5_STRICT'
-        }))
         .pipe(modifyFile((content) => {
           return content.replace(/\\\\\$/g, '$');
         }))
@@ -407,20 +329,25 @@ gulp.task('docs-build-demo-imports', () => {
       return stream
         .pipe(webpackStream({
           target: 'web',
+          mode: 'production',
           output: {
             chunkFilename: 'import.[id].js',
             filename: 'import.js'
-          }
+          },
+          plugins: [
+            new webpackClosureCompilerPlugin({
+              compiler: {
+                language_in: 'ECMASCRIPT6',
+                language_out: 'ECMASCRIPT5',
+                compilation_level: 'SIMPLE',
+                assume_function_wrapper: true,
+                output_wrapper: '(function(){%output%}).call(this)'
+              }
+            })
+          ]
         }, webpack))
         .pipe(foreach(function(stream, file) {
           return stream
-            .pipe(adjustWebpackBuildForClosureCompiler())
-            .pipe(closureCompiler({
-              compilation_level: 'SIMPLE_OPTIMIZATIONS',
-              warning_level: 'QUIET',
-              language_in: 'ECMASCRIPT6_STRICT',
-              language_out: 'ECMASCRIPT5_STRICT'
-            }))
             .pipe(modifyFile((content) => {
               return content.replace(/\\\\\$/g, '$');
             }))
@@ -456,7 +383,7 @@ gulp.task('docs-generate', gulp.series(async () => {
 }));
 
 // Build all the components' versions.
-gulp.task('build', gulp.series('clean-dist', gulp.parallel('build-module', 'build-es6'), gulp.parallel('build-es6-min', 'build-es5-min'), 'clean-tmp'));
+gulp.task('build', gulp.series('clean-dist', gulp.parallel('build-module', 'build-script'), 'clean-tmp'));
 
 // Build the docs for all the components' versions.
 gulp.task('build-docs', gulp.series(

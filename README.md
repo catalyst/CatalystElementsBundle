@@ -41,18 +41,20 @@ Please note that this package is not compatible with Bower.
 Import the module on each page that uses the component.
 
 ```html
-<script type="module" src="node_modules/@catalyst-elements/bundle/dist/catalyst-elements.module.js"></script>
+<script type="module" src="node_modules/@catalyst-elements/bundle/dist/catalyst-elements.js"></script>
 ```
 
 All included elements will now be available for use - see release notes for details on which elements are included in the bundle.
 
-### As a script
+### As a Script
 
-Import the Catalyst Element's bundle on each page that uses one or more catalyst elements.
+Import the script on each page that uses one or more catalyst elements.
 
 ```html
-<script src="node_modules/@catalyst-elements/bundle/dist/catalyst-elements.js"></script>
+<script src="node_modules/@catalyst-elements/bundle/dist/catalyst-elements.es5.min.js"></script>
 ```
+
+Please note that this script has been transpiled to es5 and thus use of `custom-elements-es5-adapter.js` or an equivalent library is required. See [es5 support](https://github.com/catalyst/CatalystElements/wiki/Browser-Compatibility#es5-support) on the wiki for details.
 
 All included elements will now be available for use - see release notes for details on which elements are included in the bundle.
 
