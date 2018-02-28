@@ -1,5 +1,5 @@
 // Import dependencies.
-import { CatalystToggleButton } from '../../catalyst-toggle-button/dist/catalyst-toggle-button.js';
+import CatalystToggleButton from '../../catalyst-toggle-button/dist/catalyst-toggle-button.js';
 
 /**
  * `<catalyst-toggle-switch>` is a toggle switch web component.
@@ -20,15 +20,15 @@ import { CatalystToggleButton } from '../../catalyst-toggle-button/dist/catalyst
  *
  * Property | Description | Default Value
  * -------- |------------ | -------------
- * `--catalyst-toggle-switch-bar-color`       | The color of the bar. | `#ced4da`
- * `--catalyst-toggle-switch-knob-color`      | The color of the knob. | `#ffffff`
- * `--catalyst-toggle-switch-bar-width`       | The width of the bar. | `44px`
- * `--catalyst-toggle-switch-bar-height`      | The height of the bar. | `16px`
- * `--catalyst-toggle-switch-knob-size`       | The size of the knob (width and height). | `26px`
+ * `--catalyst-toggle-switch-bar-color`       | The color of the bar.                      | `#ced4da`
+ * `--catalyst-toggle-switch-knob-color`      | The color of the knob.                     | `#ffffff`
+ * `--catalyst-toggle-switch-bar-width`       | The width of the bar.                      | `44px`
+ * `--catalyst-toggle-switch-bar-height`      | The height of the bar.                     | `16px`
+ * `--catalyst-toggle-switch-knob-size`       | The size of the knob (width and height).   | `26px`
  * `--catalyst-toggle-switch-knob-offset`     | The offset applied to the knob's location. | `5px`
- * `--catalyst-toggle-switch-bar-border`      | The bar's border. | `none`
- * `--catalyst-toggle-switch-knob-border`     | The knob's border. | `none`
- * `--catalyst-toggle-switch-knob-box-shadow` | The box shadow applied to the knob. | _Too Long..._
+ * `--catalyst-toggle-switch-bar-border`      | The bar's border.                          | `none`
+ * `--catalyst-toggle-switch-knob-border`     | The knob's border.                         | `none`
+ * `--catalyst-toggle-switch-knob-box-shadow` | The box shadow applied to the knob.        | _Too Long..._
  *
  * @class
  * @extends HTMLElement
@@ -51,15 +51,6 @@ class CatalystToggleSwitch extends CatalystToggleButton {
   }
 
   /**
-   * Return's true if this element has been registered, otherwise false.
-   *
-   * @returns {boolean}
-   */
-  static get _isRegistered() {
-    return window.customElements !== undefined && window.customElements.get(CatalystToggleSwitch.is) !== undefined;
-  }
-
-  /**
    * Get the default template used by this element.
    *
    * @returns {HTMLTemplateElement}
@@ -75,26 +66,6 @@ class CatalystToggleSwitch extends CatalystToggleButton {
     }
 
     return template;
-  }
-
-  /**
-   * Register this class as an element.
-   */
-  static _register() {
-    const doRegister = () => {
-      window.customElements.define(CatalystToggleSwitch.is, CatalystToggleSwitch);
-    };
-
-    // If not using web component polyfills or if polyfills are ready, register the element.
-    if (window.WebComponents === undefined || window.WebComponents.ready) {
-      doRegister();
-    }
-    // Otherwise wait until the polyfills are ready, then register the element.
-    else {
-      window.addEventListener('WebComponentsReady', () => {
-        doRegister();
-      });
-    }
   }
 
   /**
@@ -154,10 +125,18 @@ class CatalystToggleSwitch extends CatalystToggleButton {
   }
 }
 
-// Register the element if it is not already registered.
-if (!CatalystToggleSwitch._isRegistered) {
-  CatalystToggleSwitch._register();
-}
+// Make sure the polyfills are ready (if they are being used).
+new Promise((resolve) => {
+  if (window.WebComponents === undefined || window.WebComponents.ready) {
+    resolve();
+  } else {
+    window.addEventListener('WebComponentsReady', () => resolve());
+  }
+}).then(() => {
+  // Register the element.
+  window.customElements.define(CatalystToggleSwitch.is, CatalystToggleSwitch);
+});
 
 // Export the element.
+export default CatalystToggleSwitch;
 export { CatalystToggleSwitch };

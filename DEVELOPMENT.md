@@ -37,7 +37,7 @@ In the `package.json` file, add the element as a dependency.
 The element's key should be in the form `@catalyst-elements/element-name`.
 (Follow the same pattern that the other elements use).
 
-In the `src/catalyst-elements.js` file, import the element with `import { Element } from ...` - Do not use `import * as ...`.
+In the `src/catalyst-elements.js` file, import the element with `import Element from ...`.
 
 The element will now be included in future builds.
 

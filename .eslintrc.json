@@ -9,9 +9,25 @@
     "ecmaVersion": 6,
     "sourceType": "module"
   },
+  "plugins": [
+    "promise"
+  ],
+  "globals": {
+    "Promise": false
+  },
   "rules": {
     "quotes":  ["error", "single", {
       "avoidEscape": true
-    }]
+    }],
+    "promise/always-return": "off",
+    "promise/avoid-new": "off",
+    "promise/catch-or-return": "off",
+    "promise/no-callback-in-promise": "warn",
+    "promise/no-native": "off",
+    "promise/no-nesting": "warn",
+    "promise/no-promise-in-callback": "off",
+    "promise/no-return-in-finally": "warn",
+    "promise/no-return-wrap": "error",
+    "promise/param-names": "warn"
   }
 }

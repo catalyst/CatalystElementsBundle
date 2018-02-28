@@ -22,10 +22,9 @@ const analysisFilename = 'analysis';
 // Libraries.
 const gulp = require('gulp');
 const {Analyzer, generateAnalysis} = require('polymer-analyzer');
-const analyzer = Analyzer.createForDirectory('./');
 const Builder = require('polymer-build').PolymerProject;
 const del = require('del');
-const concat = require('gulp-concat');
+const deepmerge = require('deepmerge');
 const esprima = require('esprima');
 const file = require('gulp-file');
 const foreach = require('gulp-foreach');
@@ -42,17 +41,6 @@ const through = require('through2');
 const webpack = require('webpack');
 const webpackClosureCompilerPlugin = require('webpack-closure-compiler');
 const webpackStream = require('webpack-stream');
-
-/**
- * Convert a class name to an element name.
- *
- * Eg: Foo.BarBaz --> bar-baz
- *
- * @param {string} className
- */
-function classNameToElementName(className) {
-  return className.substring(className.lastIndexOf('.') + 1).split(/(?=[A-Z])/).join('-').toLowerCase();
-}
 
 /**
  * Fix issues with the automatically generated analysis.
@@ -98,7 +86,7 @@ function getStaticImports(js) {
   for (let i = 0; i < parsed.body.length; i++) {
     if (parsed.body[i].type === 'ImportDeclaration') {
       for (let j = 0; j < parsed.body[i].specifiers.length; j++) {
-        if (parsed.body[i].specifiers[j].type === 'ImportSpecifier') {
+        if (parsed.body[i].specifiers[j].type === 'ImportDefaultSpecifier' || parsed.body[i].specifiers[j].type === 'ImportSpecifier') {
           if (parsed.body[i].specifiers[j].local.type === 'Identifier') {
             imports.push(parsed.body[i].specifiers[j].local.name);
           }
@@ -110,27 +98,19 @@ function getStaticImports(js) {
   return imports;
 }
 
-// Clean the dist path.
-gulp.task('clean-dist', (done) => {
-  del(distPath).then(() => { done(); });
+ // Clean the dist path.
+ gulp.task('clean-dist', async () => {
+  await del(distPath);
 });
 
-// Clean the tmp path.
-gulp.task('clean-tmp', (done) => {
-  del(tmpPath).then(() => { done(); });
+  // Clean the tmp path.
+gulp.task('clean-tmp', async () => {
+  await del(tmpPath);
 });
 
-// Clean the docs path.
-gulp.task('clean-docs', (done) => {
-  del(docsPath).then(() => { done(); });
-});
-
-// Build the components with comments for analysis.
-// Note: HTML and CSS are not inject.
-gulp.task('build-for-analysis', () => {
-  return gulp.src([`${catalystElementsPath}/*/dist/*.js`, '!**/*.min*'])
-    .pipe(concat(`${bundleName}-analysis.js`))
-    .pipe(gulp.dest(tmpPath));
+  // Clean the docs path.
+gulp.task('clean-docs', async () => {
+  await del(docsPath);
 });
 
 // Build the es6 module version of the components.
@@ -184,13 +164,29 @@ gulp.task('build-script', () => {
 });
 
 // Analyze the elements file.
-gulp.task('create-analysis', () => {
-  return analyzer.analyze([`${tmpPath}/${bundleName}-analysis.js`]).then((analysis) => {
-    let analysisFileContents = JSON.stringify(fixAnalysis(generateAnalysis(analysis, analyzer.urlResolver)));
-    return file(`${analysisFilename}.json`, analysisFileContents, { src: true })
-      .pipe(gulp.dest('./'));
-  });
-});
+gulp.task('create-analysis', gulp.series(() => {
+  return gulp.src([`${catalystElementsPath}/*/dist/*.js`, '!**/*.min*'])
+    .pipe(rename({
+      dirname: '/'
+    }))
+    .pipe(gulp.dest(`${tmpPath}/elements`));
+}, async () => {
+  const catalystElements = await globby(`${tmpPath}/elements`);
+  const analyses = [];
+
+  for (let i = 0; i < catalystElements.length; i++) {
+    const analyzer = Analyzer.createForDirectory('./');
+    await analyzer.analyze([catalystElements[i]]).then((analysis) => {
+      analyses.push(fixAnalysis(generateAnalysis(analysis, analyzer.urlResolver)));
+    });
+  }
+
+  const fullAnalysis = deepmerge.all.call(this, analyses);
+  const analysisFileContents = JSON.stringify(fullAnalysis);
+
+  return file(`${analysisFilename}.json`, analysisFileContents, { src: true })
+    .pipe(gulp.dest('./'));
+}));
 
 // Clone all the dependencies needed for docs.
 gulp.task('docs-clone-dependencies', gulp.series(() => {
@@ -198,6 +194,7 @@ gulp.task('docs-clone-dependencies', gulp.series(() => {
 }, () => {
   return gulp.src([
     'index.html',
+    'docs-imports-importer.js',
     'docs-imports.js',
     'analysis.json',
     'docs-build-config.json'
@@ -254,14 +251,14 @@ gulp.task('docs-build-imports', gulp.series(() => {
     }))
     .pipe(gulp.dest('./'));
 }, () => {
-  return gulp.src(`${tmpPath}/docs-imports.js`, { base: tmpPath })
+  return gulp.src(`${tmpPath}/docs-imports-importer.js`, { base: tmpPath })
     .pipe(named())
     .pipe(webpackStream({
       target: 'web',
       mode: 'production',
       output: {
         chunkFilename: 'docs-imports.[id].js',
-        filename: 'docs-imports.js'
+        filename: 'docs-imports-importer.js'
       },
       plugins: [
         new webpackClosureCompilerPlugin({
@@ -323,7 +320,7 @@ gulp.task('docs-build-demos', gulp.series(() => {
 
 // Build the imports for each demo.
 gulp.task('docs-build-demo-imports', () => {
-  return gulp.src(`${tmpPath}/scripts/@catalyst-elements/*/demo/import.js`)
+  return gulp.src(`${tmpPath}/scripts/@catalyst-elements/*/demo/imports-importer.js`)
     .pipe(foreach(function(stream, file) {
       let output = path.dirname(file.path);
       return stream
@@ -331,8 +328,8 @@ gulp.task('docs-build-demo-imports', () => {
           target: 'web',
           mode: 'production',
           output: {
-            chunkFilename: 'import.[id].js',
-            filename: 'import.js'
+            chunkFilename: 'imports.[id].js',
+            filename: 'imports-importer.js'
           },
           plugins: [
             new webpackClosureCompilerPlugin({
@@ -363,7 +360,7 @@ gulp.task('docs-build-demo-imports', () => {
 gulp.task('docs-generate', gulp.series(async () => {
   let buildConfig = require(`${tmpPath}/docs-build-config.json`);
 
-  let builtFiles = await globby(['docs-imports.js', 'docs-imports.*.js'], { cwd: tmpPath });
+  let builtFiles = await globby(['docs-imports-importer.js', 'docs-imports.*.js'], { cwd: tmpPath });
 
   for (let i = 0; i < builtFiles.length; i++) {
     buildConfig.extraDependencies.push(builtFiles[i]);
@@ -376,10 +373,8 @@ gulp.task('docs-generate', gulp.series(async () => {
 }, () => {
   return gulp.src(`${docsPath}/${tmpPath}/**`)
     .pipe(gulp.dest(docsPath));
-}, (done) => {
-  del(`${docsPath}/${tmpPath}/`).then(() => {
-    done();
-  });
+}, async () => {
+  await del(`${docsPath}/${tmpPath}/`);
 }));
 
 // Build all the components' versions.
@@ -398,7 +393,7 @@ gulp.task('build-docs', gulp.series(
   'clean-tmp'));
 
 // Analyze all the components.
-gulp.task('analyze', gulp.series('build-for-analysis', 'create-analysis', 'clean-tmp'));
+gulp.task('analyze', gulp.series('create-analysis', 'clean-tmp'));
 
 // Default task.
 gulp.task('default', gulp.series('build'));
