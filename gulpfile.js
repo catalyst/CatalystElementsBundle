@@ -53,6 +53,11 @@ function fixAnalysis(analysis) {
     // For each element.
     for (let i = 0; i < analysis.elements.length; i++) {
 
+      // If the element's path starts with tmp, change it to be the dist bundle.
+      if (analysis.elements[i].path && analysis.elements[i].path.indexOf('tmp/') === 0) {
+        analysis.elements[i].path = `dist/${bundleName}.js`;
+      }
+
       // If `demos` is defined.
       if (analysis.elements[i].demos) {
         // For each demo.
