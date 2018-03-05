@@ -71,23 +71,31 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@catalyst-elements/catalyst-flip-button@^0.8.0":
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/@catalyst-elements/catalyst-flip-button/-/catalyst-flip-button-0.8.0.tgz#da14fbc25dcc5815464986e0b66a7812cbf39425"
+"@catalyst-elements/catalyst-flip-button@*":
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/@catalyst-elements/catalyst-flip-button/-/catalyst-flip-button-0.8.1.tgz#45548536b43984eb543ecf21094b634369d1069c"
 
-"@catalyst-elements/catalyst-toggle-button@^0.6.1":
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/@catalyst-elements/catalyst-toggle-button/-/catalyst-toggle-button-0.6.1.tgz#14a27599ed65bcaa7566d74e916eaaaa637624f2"
+"@catalyst-elements/catalyst-toggle-button@*":
+  version "0.6.3"
+  resolved "https://registry.yarnpkg.com/@catalyst-elements/catalyst-toggle-button/-/catalyst-toggle-button-0.6.3.tgz#521e7aa9968009b6be54fc1436629d79c0f92c60"
 
 "@catalyst-elements/catalyst-toggle-button@^0.6.2":
   version "0.6.2"
   resolved "https://registry.yarnpkg.com/@catalyst-elements/catalyst-toggle-button/-/catalyst-toggle-button-0.6.2.tgz#0fd7138426d216712c22d7cc363d89cf416dfceb"
 
-"@catalyst-elements/catalyst-toggle-switch@^0.5.1":
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/@catalyst-elements/catalyst-toggle-switch/-/catalyst-toggle-switch-0.5.1.tgz#e62fd4a05fd6aaa6783999476517f1f77526d102"
+"@catalyst-elements/catalyst-toggle-switch@*":
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/@catalyst-elements/catalyst-toggle-switch/-/catalyst-toggle-switch-0.5.2.tgz#783402bd496ec7cd3aa42b0e9c01b2b691fcfab1"
   dependencies:
-    "@catalyst-elements/catalyst-toggle-button" "^0.6.1"
+    "@catalyst-elements/catalyst-toggle-button" "^0.6.2"
+
+"@catalyst-elements/collection@*":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@catalyst-elements/collection/-/collection-0.1.0.tgz#7aa4d4f4f3e6bb68dfac80e1134e922be9613de6"
+  dependencies:
+    "@catalyst-elements/catalyst-flip-button" "*"
+    "@catalyst-elements/catalyst-toggle-button" "*"
+    "@catalyst-elements/catalyst-toggle-switch" "*"
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
