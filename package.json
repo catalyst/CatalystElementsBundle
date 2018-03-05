@@ -1,7 +1,7 @@
 {
   "name": "@catalyst-elements/bundle",
   "version": "0.6.1",
-  "description": "A collection of all the catalyst elements.",
+  "description": "A bundle of all the catalyst elements.",
   "license": "BSD-3-Clause",
   "main": "src/catalyst-elements.js",
   "directories": {
@@ -9,18 +9,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/catalyst/CatalystElements.git"
+    "url": "git+https://github.com/catalyst/CatalystElementsBundle.git"
   },
   "author": {
     "name": "Rebecca Stevens",
     "email": "rebeccastevens@catalyst.net.nz"
   },
   "bugs": {
-    "url": "https://github.com/catalyst/CatalystElements/issues"
+    "url": "https://github.com/catalyst/CatalystElementsBundle/issues"
   },
-  "homepage": "https://github.com/catalyst/CatalystElements#readme",
+  "homepage": "https://github.com/catalyst/CatalystElementsBundle#readme",
   "keywords": [
-    "element-collection",
     "web-components"
   ],
   "scripts": {
@@ -30,12 +29,8 @@
     "serve": "scripts/serve.sh",
     "postinstall": "scripts/fix-dependencies.sh"
   },
-  "dependencies": {
-    "@catalyst-elements/catalyst-flip-button": "^0.8.0",
-    "@catalyst-elements/catalyst-toggle-button": "^0.6.2",
-    "@catalyst-elements/catalyst-toggle-switch": "^0.5.1"
-  },
   "devDependencies": {
+    "@catalyst-elements/collection": "*",
     "@polymer/iron-component-page": "^3.0.0-pre.1",
     "@polymer/iron-demo-helpers": "^3.0.0-pre.1",
     "@webcomponents/shadycss": "^1.1.1",
