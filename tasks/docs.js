@@ -1,14 +1,10 @@
 // Load config.
 const config = require('./config.js');
 
-// Load util.
-const util = require('./util.js');
-
 // Libraries.
 const gulp = require('gulp');
 const Builder = require('polymer-build').PolymerProject;
 const foreach = require('gulp-foreach');
-const fs = require('graceful-fs');
 const inject = require('gulp-inject');
 const mergeStream = require('merge-stream');
 const modifyFile = require('gulp-modify-file');
