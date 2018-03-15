@@ -6,7 +6,6 @@ const gulp = require('gulp');
 const esprima = require('esprima');
 const modifyFile = require('gulp-modify-file');
 const rename = require('gulp-rename');
-const stripComments = require('gulp-strip-comments');
 const webpack = require('webpack');
 const webpackClosureCompilerPlugin = require('webpack-closure-compiler');
 const webpackStream = require('webpack-stream');
@@ -39,21 +38,20 @@ function getStaticImports(js) {
 gulp.task('build-module', () => {
   return gulp
     .src(`./${config.src.path}/${config.bundle.name}.js`)
-    .pipe(stripComments())
     .pipe(
       modifyFile(content => {
         let imports = getStaticImports(content);
 
+        // Strip eslint lines.
+        content = content.replace(/\/\*\s*eslint[ -].*\*\//gm, '');
+        content = content.trim();
         content = content.replace(
           /\.\.\/node_modules\/@catalyst-elements\//g,
-          '../../'
+          '../'
         );
 
-        // Add a comment to the top of the file.
-        content = '// Import the catalyst elements.\n' + content;
-
         // Export all the things.
-        content = content + '\n// Export all the catalyst elements.\n';
+        content = content + '\n\n// Export everything.\n';
         content = content + 'export {\n  ' + imports.join(',\n  ') + '\n};\n';
 
         return content;
@@ -69,35 +67,65 @@ gulp.task('build-module', () => {
 });
 
 // Build the es5 script version of the components.
-gulp.task('build-script', () => {
-  return gulp
-    .src(`./${config.src.path}/${config.bundle.name}.js`)
-    .pipe(
-      webpackStream(
-        {
-          target: 'web',
-          mode: 'production',
-          output: {
-            chunkFilename: `${config.bundle.name}.[id].es5.min.js`,
-            filename: `${config.bundle.name}.es5.min.js`
-          },
-          plugins: [
-            new webpackClosureCompilerPlugin({
-              compiler: {
-                language_in: 'ECMASCRIPT6',
-                language_out: 'ECMASCRIPT5',
-                compilation_level: 'SIMPLE',
-                assume_function_wrapper: true,
-                output_wrapper: '(function(){%output%}).call(this)'
-              }
-            })
-          ]
-        },
-        webpack
-      )
-    )
-    .pipe(gulp.dest(`./${config.dist.path}`));
-});
+gulp.task(
+  'build-script',
+  gulp.series(
+    () => {
+      return gulp
+        .src(`./${config.src.path}/${config.bundle.name}.js`)
+        .pipe(
+          modifyFile(content => {
+            let imports = getStaticImports(content);
+
+            // Export all the things.
+            for (let i = 0; i < imports.length; i++) {
+              content =
+                content +
+                `window.CatalystElements.${imports[i]} = ${imports[i]};`;
+            }
+
+            return content;
+          })
+        )
+        .pipe(
+          rename({
+            basename: config.bundle.name,
+            extname: '.js'
+          })
+        )
+        .pipe(gulp.dest(`./${config.temp.path}`));
+    },
+    () => {
+      return gulp
+        .src(`./${config.temp.path}/${config.bundle.name}.js`)
+        .pipe(
+          webpackStream(
+            {
+              target: 'web',
+              mode: 'production',
+              output: {
+                chunkFilename: `${config.bundle.name}.[id].es5.min.js`,
+                filename: `${config.bundle.name}.es5.min.js`
+              },
+              plugins: [
+                new webpackClosureCompilerPlugin({
+                  compiler: {
+                    language_in: 'ECMASCRIPT6',
+                    language_out: 'ECMASCRIPT5',
+                    compilation_level: 'SIMPLE',
+                    assume_function_wrapper: true,
+                    output_wrapper: '(function(){%output%}).call(this)'
+                  }
+                })
+              ]
+            },
+            webpack
+          )
+        )
+        .pipe(gulp.dest(`./${config.dist.path}`));
+    }
+  )
+);
 
 // Build all the components' versions.
 gulp.task(
