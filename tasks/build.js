@@ -50,7 +50,7 @@ gulp.task('build-module', () => {
         );
 
         // Add a comment to the top of the file.
-        content = '// Import the catalyts elements.\n' + content;
+        content = '// Import the catalyst elements.\n' + content;
 
         // Export all the things.
         content = content + '\n// Export all the catalyst elements.\n';
