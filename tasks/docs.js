@@ -328,10 +328,7 @@ gulp.task('docs-generate', () => {
     root: `${config.temp.path}/`,
     entrypoint: 'index.html',
     fragments: [],
-    sources: [
-      `${config.docs.nodeModulesPath}/${config.bundle.scope}/**`,
-      `${config.docs.nodeModulesPath}/${config.bundle.scope}/**`
-    ],
+    sources: [`${config.docs.nodeModulesPath}/${config.mixin.scope}/**`],
     extraDependencies: [
       `${
         config.docs.nodeModulesPath
