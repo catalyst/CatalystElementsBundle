@@ -10,7 +10,6 @@ if (scope === '') {
 }
 
 module.exports = {
-
   bundle: {
     name: 'catalyst-elements',
     scope: scope,
@@ -23,13 +22,13 @@ module.exports = {
   },
 
   dist: {
-    path: 'dist',
+    path: 'dist'
   },
 
   demos: {
     path: 'demo',
     importsFilename: 'imports.js',
-    importsImporterFilename: 'imports-importer.js',
+    importsImporterFilename: 'imports-importer.js'
   },
 
   docs: {
@@ -42,7 +41,7 @@ module.exports = {
   },
 
   tasks: {
-    path: 'tasks',
+    path: 'tasks'
   },
 
   temp: {
