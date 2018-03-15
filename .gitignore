@@ -1,11 +1,8 @@
 /tmp/
+/dist/
+/analysis.json
 
 # Node
-# "yarn.lock" file is used instead of "package-lock.json"
-/node_modules/
-/npm-debug.log
-/yarn-error.log
-/package-lock.json
-
-# Docs
-/analysis.json
+node_modules/
+npm-debug.log
+yarn-error.log

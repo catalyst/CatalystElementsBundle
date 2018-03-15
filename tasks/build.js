@@ -5,6 +5,7 @@ const config = require('./config.js');
 const gulp = require('gulp');
 const esprima = require('esprima');
 const modifyFile = require('gulp-modify-file');
+const prettier = require('prettier');
 const rename = require('gulp-rename');
 const webpack = require('webpack');
 const webpackClosureCompilerPlugin = require('webpack-closure-compiler');
@@ -127,12 +128,42 @@ gulp.task(
   )
 );
 
+gulp.task(
+  'build-finalize',
+  gulp.parallel(
+    () => {
+      return gulp
+        .src(['README.md', 'LICENSE'])
+        .pipe(gulp.dest(`./${config.dist.path}`));
+    },
+    () => {
+      return gulp
+        .src('package.json')
+        .pipe(
+          modifyFile(content => {
+            const json = JSON.parse(content);
+            json.main = `${config.bundle.name}.js`;
+            json.scripts = {
+              prepublishOnly:
+                "node -e \"assert.equal(require('./package.json').version, require('../package.json').version)\""
+            };
+            delete json.directories;
+            delete json.engines;
+            delete json.devDependencies;
+            return prettier.format(JSON.stringify(json), { parser: 'json' });
+          })
+        )
+        .pipe(gulp.dest(`./${config.dist.path}`));
+    }
+  )
+);
+
 // Build all the components' versions.
 gulp.task(
   'build',
   gulp.series(
     'clean-dist',
     gulp.parallel('build-module', 'build-script'),
-    'clean-tmp'
+    gulp.parallel('build-finalize', 'clean-tmp')
   )
 );
