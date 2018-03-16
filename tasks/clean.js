@@ -10,8 +10,8 @@ gulp.task('clean-dist', async () => {
   await del(`./${config.dist.path}`);
 });
 
-// Clean the tmp path.
-gulp.task('clean-tmp', async () => {
+// Clean the temp path.
+gulp.task('clean-temp', async () => {
   await del(`./${config.temp.path}`);
 });
 

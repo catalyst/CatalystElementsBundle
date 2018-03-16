@@ -45,7 +45,7 @@ module.exports = {
   },
 
   temp: {
-    path: 'tmp'
+    path: '.tmp'
   },
 
   package: packageInfo

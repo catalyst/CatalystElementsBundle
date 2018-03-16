@@ -5,7 +5,7 @@ const config = require('./config.js');
 const gulp = require('gulp');
 const { Analyzer, generateAnalysis } = require('polymer-analyzer');
 const file = require('gulp-file');
-const globby = require('globby');
+const glob = require('glob');
 const rename = require('gulp-rename');
 
 /**
@@ -23,9 +23,7 @@ function fixAnalysis(analysis) {
         analysis.elements[i].path &&
         analysis.elements[i].path.indexOf('tmp/') === 0
       ) {
-        analysis.elements[i].path = `${config.dist.path}/${
-          config.bundle.name
-        }.js`;
+        analysis.elements[i].path = `${config.bundle.name}.js`;
       }
 
       // If `demos` is defined.
@@ -47,38 +45,43 @@ function fixAnalysis(analysis) {
 // Copy all the elements over to the temp folder for analysis.
 gulp.task('get-elements-for-analysis', () => {
   return gulp
-    .src([
-      `./${config.bundle.elementsPath}/*/${config.dist.path}/**/*.js`,
-      '!**/*.min*'
-    ])
+    .src([`./${config.bundle.elementsPath}/catalyst-*/**/*.js`, '!**/*.min*'])
     .pipe(
       rename({
         dirname: '/'
       })
     )
-    .pipe(gulp.dest(`./${config.temp.path}/elements`));
+    .pipe(gulp.dest(`./${config.temp.path}/analyze`));
 });
 
 // Analyze the elements' files.
-gulp.task('create-analysis', async () => {
+gulp.task('create-analysis', done => {
   const analyzer = Analyzer.createForDirectory('./');
 
-  await globby(`./${config.temp.path}/elements/**/*.js`)
-    .then(elements => {
-      return analyzer.analyze(elements);
-    })
-    .then(analysis => {
-      let analysisFileContents = JSON.stringify(
-        fixAnalysis(generateAnalysis(analysis, analyzer.urlResolver))
-      );
-      return file(config.docs.analysisFilename, analysisFileContents, {
-        src: true
-      }).pipe(gulp.dest('./'));
-    });
+  glob(`./${config.temp.path}/analyze/**/*.js`, (err, files) => {
+    if (err) {
+      throw err;
+    }
+
+    analyzer
+      .analyze(files)
+      .then(analysis => {
+        let analysisFileContents = JSON.stringify(
+          fixAnalysis(generateAnalysis(analysis, analyzer.urlResolver))
+        );
+        file(config.docs.analysisFilename, analysisFileContents, {
+          src: true
+        }).pipe(gulp.dest('./'));
+        done();
+      })
+      .catch(err => {
+        done(err);
+      });
+  });
 });
 
 // Analyze the component.
 gulp.task(
   'analyze',
-  gulp.series('get-elements-for-analysis', 'create-analysis', 'clean-tmp')
+  gulp.series('get-elements-for-analysis', 'create-analysis')
 );

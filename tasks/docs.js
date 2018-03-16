@@ -5,6 +5,9 @@ const config = require('./config.js');
 const gulp = require('gulp');
 const Builder = require('polymer-build').PolymerProject;
 const foreach = require('gulp-foreach');
+const fs = require('fs');
+const git = require('gulp-git');
+const glob = require('glob');
 const inject = require('gulp-inject');
 const mergeStream = require('merge-stream');
 const modifyFile = require('gulp-modify-file');
@@ -15,6 +18,118 @@ const webpack = require('webpack');
 const webpackClosureCompilerPlugin = require('webpack-closure-compiler');
 const webpackStream = require('webpack-stream');
 
+/**
+ * Clone all the repos specified by the given package.json files.
+ *
+ * @param {string[]} packageFiles
+ *   Array of file paths to the package.json files that contrain the infomation
+ *   about the repos to clone
+ * @returns {Promise}
+ */
+function cloneRepositories(packageFiles) {
+  return new Promise(async (resolve, reject) => {
+    for (let i = 0; i < packageFiles.length; i++) {
+      const data = fs.readFileSync(packageFiles[i]);
+
+      const json = JSON.parse(data);
+      const name = json.name;
+      const version = json.version;
+      const repository = json.repository;
+
+      let repoPath;
+      if (repository === undefined) {
+        reject(new Error(`Repository not set in ${name}'s package.json file.`));
+      }
+      if (typeof repository === 'object') {
+        repoPath = repository.url;
+        if (repository.type !== 'git') {
+          reject(new Error(`"${repoPath}" is not a git repository.`));
+        }
+      } else {
+        repoPath = repository;
+      }
+
+      // Replace `git+https://` with `git://`.
+      if (repoPath.indexOf('git+https://') === 0) {
+        repoPath = 'git://' + repoPath.substring('git+https://'.length);
+      }
+
+      const path = `./${config.temp.path}/docs/demo-clones/${name}`;
+
+      await directoryReadyForCloning(path)
+        .then(async () => {
+          await cloneRepository(repoPath, path, `v${version}`);
+        })
+        .catch(err => {
+          if (err.message === 'Directory not empty.') {
+            console.info(
+              `skipping clone of "${name}" - ${path}" is not empty.`
+            );
+          } else {
+            reject();
+          }
+        });
+    }
+
+    resolve();
+  });
+}
+
+/**
+ * Test if a directory is ready for cloning.
+ *
+ * @param {string} dirPath - Path of the directory to check
+ * @returns {Promise}
+ */
+function directoryReadyForCloning(dirPath) {
+  return new Promise((resolve, reject) => {
+    if (fs.existsSync(dirPath)) {
+      fs.readdir(dirPath, (err, files) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (files.length === 0) {
+            resolve();
+          } else {
+            reject(new Error('Directory not empty.'));
+          }
+        }
+      });
+    } else {
+      resolve();
+    }
+  });
+}
+
+/**
+ * Clone the given repository; then if a branch is given, check it out.
+ *
+ * @param {string} repoPath - The path to the repo
+ * @param {string} dirPath - The path to clone the repo into
+ * @param {string} [branch] - The branch to checkout
+ * @returns {Promise}
+ */
+function cloneRepository(repoPath, dirPath, branch) {
+  return new Promise((resolve, reject) => {
+    console.info(`Cloning ${repoPath}`);
+    git.clone(repoPath, { args: `${dirPath} --quiet` }, err => {
+      if (err) {
+        reject(err);
+      } else if (branch) {
+        git.checkout(branch, { args: '--quiet', cwd: dirPath }, err => {
+          if (err) {
+            reject(err);
+          }
+
+          resolve();
+        });
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
 // Clone all the dependencies needed for docs.
 gulp.task(
   'docs-clone-dependencies',
@@ -24,7 +139,7 @@ gulp.task(
       return gulp
         .src('./node_modules/**', { follow: true })
         .pipe(
-          gulp.dest(`./${config.temp.path}/${config.docs.nodeModulesPath}`)
+          gulp.dest(`./${config.temp.path}/docs/${config.docs.nodeModulesPath}`)
         );
     },
     () => {
@@ -36,7 +151,7 @@ gulp.task(
             basename: 'index'
           })
         )
-        .pipe(gulp.dest(`./${config.temp.path}`));
+        .pipe(gulp.dest(`./${config.temp.path}/docs`));
     },
     () => {
       // Copy over other dependencies.
@@ -46,7 +161,7 @@ gulp.task(
           `./${config.docs.importsFilename}`,
           `./${config.docs.analysisFilename}`
         ])
-        .pipe(gulp.dest(`./${config.temp.path}`));
+        .pipe(gulp.dest(`./${config.temp.path}/docs`));
     }
   )
 );
@@ -56,7 +171,7 @@ gulp.task(
   'docs-update-analysis',
   gulp.series(() => {
     return gulp
-      .src(`./${config.temp.path}/${config.docs.analysisFilename}`, {
+      .src(`./${config.temp.path}/docs/${config.docs.analysisFilename}`, {
         base: './'
       })
       .pipe(
@@ -89,7 +204,7 @@ gulp.task(
     () => {
       return (
         gulp
-          .src(`./${config.temp.path}/index.html`, { base: './' })
+          .src(`./${config.temp.path}/docs/index.html`, { base: './' })
           // The file specified here don't matter but exactly one is needed.
           .pipe(
             inject(gulp.src('./gulpfile.js', { base: './', read: false }), {
@@ -105,7 +220,7 @@ gulp.task(
     },
     () => {
       return gulp
-        .src(`./${config.temp.path}/index.html`, { base: './' })
+        .src(`./${config.temp.path}/docs/index.html`, { base: './' })
         .pipe(
           modifyFile(content => {
             content = content.replace(
@@ -126,7 +241,7 @@ gulp.task(
   gulp.series(
     () => {
       return gulp
-        .src(`./${config.temp.path}/${config.docs.importsFilename}`, {
+        .src(`./${config.temp.path}/docs/${config.docs.importsFilename}`, {
           base: './'
         })
         .pipe(
@@ -146,9 +261,12 @@ gulp.task(
       );
 
       return gulp
-        .src(`./${config.temp.path}/${config.docs.importsImporterFilename}`, {
-          base: config.temp.path
-        })
+        .src(
+          `./${config.temp.path}/docs/${config.docs.importsImporterFilename}`,
+          {
+            base: config.temp.path
+          }
+        )
         .pipe(named())
         .pipe(
           webpackStream(
@@ -175,7 +293,7 @@ gulp.task(
           )
         )
         .pipe(
-          foreach(function(stream, file) {
+          foreach((stream, file) => {
             return stream
               .pipe(
                 modifyFile(content => {
@@ -187,12 +305,56 @@ gulp.task(
                   basename: path.basename(file.path, '.js')
                 })
               )
-              .pipe(gulp.dest(`./${config.temp.path}`));
+              .pipe(gulp.dest(`./${config.temp.path}/docs`));
           })
         );
     }
   )
 );
+
+// Get the demos for the elements.
+gulp.task('docs-get-demos', done => {
+  glob(
+    `./${config.bundle.elementsPath}/catalyst-*/package.json`,
+    (err, files) => {
+      if (err) {
+        throw err;
+      }
+
+      cloneRepositories(files)
+        .then(() => {
+          for (let i = 0; i < files.length; i++) {
+            const fileDirPath = path.dirname(files[i]);
+            const name =
+              config.bundle.scope === null
+                ? fileDirPath.substring(fileDirPath.lastIndexOf('/') + 1)
+                : fileDirPath.substring(
+                    fileDirPath.lastIndexOf(config.bundle.scope)
+                  );
+            const dir = `./${config.temp.path}/docs/demo-clones/${name}`;
+
+            const base = path.normalize(
+              config.bundle.scope === null ? `${dir}/..` : `${dir}/../..`
+            );
+
+            gulp
+              .src(`${dir}/${config.demos.path}/**`, { base: base })
+              .pipe(
+                gulp.dest(
+                  `./${config.temp.path}/docs/${config.docs.nodeModulesPath}`
+                )
+              );
+          }
+        })
+        .then(() => {
+          done();
+        })
+        .catch(err => {
+          done(err);
+        });
+    }
+  );
+});
 
 // Build the demos.
 gulp.task(
@@ -201,7 +363,7 @@ gulp.task(
     () => {
       return gulp
         .src(
-          `./${config.temp.path}/${config.docs.nodeModulesPath}/${
+          `./${config.temp.path}/docs/${config.docs.nodeModulesPath}/${
             config.bundle.scope
           }/*/${config.demos.path}/**/*.html`,
           { base: './' }
@@ -216,7 +378,7 @@ gulp.task(
 
             let es5AdapterSrc = path.relative(
               dir,
-              `./${config.temp.path}/${
+              `./${config.temp.path}/docs/${
                 config.docs.nodeModulesPath
               }/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js`
             );
@@ -244,7 +406,7 @@ gulp.task(
     () => {
       return gulp
         .src(
-          `./${config.temp.path}/${config.docs.nodeModulesPath}/${
+          `./${config.temp.path}/docs/${config.docs.nodeModulesPath}/${
             config.bundle.scope
           }/*/${config.demos.path}/*.html`,
           { base: './' }
@@ -268,7 +430,7 @@ gulp.task('docs-build-demo-imports', () => {
 
   return gulp
     .src(
-      `${config.temp.path}/${config.docs.nodeModulesPath}/${
+      `${config.temp.path}/docs/${config.docs.nodeModulesPath}/${
         config.bundle.scope
       }/*/${config.demos.path}/${config.demos.importsImporterFilename}`
     )
@@ -325,10 +487,12 @@ gulp.task('docs-generate', () => {
   const docsImportsBaseName = path.basename(config.docs.importsFilename, '.js');
 
   const buildConfig = {
-    root: `${config.temp.path}/`,
+    root: `${config.temp.path}/docs/`,
     entrypoint: 'index.html',
     fragments: [],
-    sources: [`${config.docs.nodeModulesPath}/${config.mixin.scope}/**`],
+    sources: [
+      `${config.docs.nodeModulesPath}/${config.bundle.scope}/catalyst-*/**`
+    ],
     extraDependencies: [
       `${
         config.docs.nodeModulesPath
@@ -359,13 +523,11 @@ gulp.task('docs-generate', () => {
   return mergeStream(docBuilder.sources(), docBuilder.dependencies())
     .pipe(
       rename(filepath => {
-        if (filepath.dirname === config.temp.path) {
-          filepath.dirname = './';
-        } else {
-          let prefix = path.normalize(`${config.temp.path}/`);
-          if (filepath.dirname.indexOf(prefix) === 0) {
-            filepath.dirname = filepath.dirname.substring(prefix.length);
-          }
+        const prefix = path.normalize(`${config.temp.path}/docs`);
+        if (filepath.dirname.indexOf(prefix) === 0) {
+          filepath.dirname = path.normalize(
+            filepath.dirname.substring(prefix.length)
+          );
         }
       })
     )
@@ -381,9 +543,9 @@ gulp.task(
     'docs-update-analysis',
     'docs-build-index',
     'docs-build-imports',
+    'docs-get-demos',
     'docs-build-demos',
     'docs-build-demo-imports',
-    'docs-generate',
-    'clean-tmp'
+    'docs-generate'
   )
 );

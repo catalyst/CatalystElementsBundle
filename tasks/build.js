@@ -76,13 +76,20 @@ gulp.task(
         .src(`./${config.src.path}/${config.bundle.name}.js`)
         .pipe(
           modifyFile(content => {
+            content = content.replace(
+              /\.\.\/node_modules\//g,
+              '../../node_modules/'
+            );
+
             let imports = getStaticImports(content);
+
+            content = content + '\n// Export everything.\n';
 
             // Export all the things.
             for (let i = 0; i < imports.length; i++) {
               content =
                 content +
-                `window.CatalystElements.${imports[i]} = ${imports[i]};`;
+                `window.CatalystElements.${imports[i]} = ${imports[i]};\n`;
             }
 
             return content;
@@ -94,11 +101,11 @@ gulp.task(
             extname: '.js'
           })
         )
-        .pipe(gulp.dest(`./${config.temp.path}`));
+        .pipe(gulp.dest(`./${config.temp.path}/build`));
     },
     () => {
       return gulp
-        .src(`./${config.temp.path}/${config.bundle.name}.js`)
+        .src(`./${config.temp.path}/build/${config.bundle.name}.js`)
         .pipe(
           webpackStream(
             {
@@ -164,6 +171,6 @@ gulp.task(
   gulp.series(
     'clean-dist',
     gulp.parallel('build-module', 'build-script'),
-    gulp.parallel('build-finalize', 'clean-tmp')
+    'build-finalize'
   )
 );

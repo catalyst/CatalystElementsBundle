@@ -1,23 +1,30 @@
 {
   "parser": "babel-eslint",
-  "extends": [
-    "eslint:recommended",
-    "plugin:promise/recommended"
-  ],
+  "extends": ["eslint:recommended", "plugin:promise/recommended"],
   "env": {
     "node": true,
     "es6": true
   },
-  "plugins": [
-    "promise"
-  ],
+  "plugins": ["promise"],
   "globals": {
     "Promise": false
   },
   "rules": {
-    "quotes":  ["error", "single", {
-      "avoidEscape": true
-    }],
-    "promise/always-return": "off"
+    "no-console": [
+      "error",
+      {
+        "allow": ["info", "warn", "error"]
+      }
+    ],
+    "quotes": [
+      "error",
+      "single",
+      {
+        "avoidEscape": true
+      }
+    ],
+    "promise/always-return": "off",
+    "promise/avoid-new": "off",
+    "promise/no-promise-in-callback": "off"
   }
 }
