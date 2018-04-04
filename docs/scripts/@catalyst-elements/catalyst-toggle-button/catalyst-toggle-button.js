@@ -1,5 +1,5 @@
 // Import dependencies.
-import CatalystToggleMixin from '../../catalyst-toggle-mixin/dist/catalyst-toggle-mixin.js';
+import CatalystToggleMixin from '../catalyst-toggle-mixin/catalyst-toggle-mixin.js';
 
 const SuperClass = CatalystToggleMixin(HTMLElement);
 
@@ -30,7 +30,6 @@ const SuperClass = CatalystToggleMixin(HTMLElement);
  * @demo demo/basic.html Basic
  */
 class CatalystToggleButton extends SuperClass {
-
   /**
    * The element's tag name.
    *
@@ -47,7 +46,7 @@ class CatalystToggleButton extends SuperClass {
    */
   static get template() {
     let template = document.createElement('template');
-    template.innerHTML = `<style>:host{display:inline-block;-webkit-box-align:start;-ms-flex-align:start;align-items:flex-start;padding:2px 7px;margin:0;font:400 13.3333px Arial;letter-spacing:normal;word-spacing:normal;color:#000;text-align:center;text-indent:0;text-rendering:auto;text-shadow:none;text-transform:none;cursor:default;background-color:#ddd;border:2px outset #ddd;-o-border-image:none;border-image:none;-o-border-image:initial;border-image:initial;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-appearance:button;-moz-appearance:button}:host([pressed]){padding:2px 6px 2px 8px;color:#000;text-shadow:.5px .5px 1px #f0f0f0;background-color:#bbb;border-color:#aaa;border-style:inset}:host([hidden]){display:none}</style><slot></slot>`;  // eslint-disable-line quotes
+    template.innerHTML = `<style>:host{display:inline-block;-webkit-box-align:start;-ms-flex-align:start;align-items:flex-start;padding:2px 7px;margin:0;font:400 13.3333px Arial;letter-spacing:normal;word-spacing:normal;color:#000;text-align:center;text-indent:0;text-rendering:auto;text-shadow:none;text-transform:none;cursor:default;background-color:#ddd;border:2px outset #ddd;-o-border-image:none;border-image:none;-o-border-image:initial;border-image:initial;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-appearance:button;-moz-appearance:button}:host([pressed]){padding:2px 6px 2px 8px;color:#000;text-shadow:.5px .5px 1px #f0f0f0;background-color:#bbb;border-color:#aaa;border-style:inset}:host([hidden]){display:none}</style><slot></slot>`; // eslint-disable-line quotes
 
     // If using ShadyCSS.
     if (window.ShadyCSS !== undefined) {
@@ -65,8 +64,10 @@ class CatalystToggleButton extends SuperClass {
     super();
 
     // Create a shadow root and stamp out the template's content inside.
-    this.attachShadow({mode: 'open'});
-    this.shadowRoot.appendChild(CatalystToggleButton.template.content.cloneNode(true));
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.appendChild(
+      CatalystToggleButton.template.content.cloneNode(true)
+    );
   }
 
   /**
@@ -85,7 +86,7 @@ class CatalystToggleButton extends SuperClass {
 }
 
 // Make sure the polyfills are ready (if they are being used).
-new Promise((resolve) => {
+new Promise(resolve => {
   if (window.WebComponents === undefined || window.WebComponents.ready) {
     resolve();
   } else {

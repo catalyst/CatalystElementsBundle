@@ -1,0 +1,26 @@
+{
+  "name": "@catalyst-elements/catalyst-toggle-mixin",
+  "license": "BSD-3-Clause",
+  "version": "0.5.3",
+  "description": "A mixin that makes an element toggleable.",
+  "main": "catalyst-toggle-mixin.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/catalyst/catalyst-toggle-mixin.git"
+  },
+  "author": {
+    "name": "Rebecca Stevens",
+    "email": "rebeccastevens@catalyst.net.nz"
+  },
+  "keywords": ["web-components", "mixin", "toggle"],
+  "bugs": { "url": "https://github.com/catalyst/catalyst-toggle-mixin/issues" },
+  "homepage": "https://github.com/catalyst/catalyst-toggle-mixin#readme",
+  "scripts": {
+    "prepublishOnly":
+      "node -e \"assert.equal(require('./package.json').version, require('../package.json').version)\""
+  },
+  "dependencies": {
+    "@catalyst-elements/catalyst-labelable-mixin": "^0.1.0",
+    "@catalyst-elements/catalyst-lazy-properties-mixin": "^0.1.0"
+  }
+}

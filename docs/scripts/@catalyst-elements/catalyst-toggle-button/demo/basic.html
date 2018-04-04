@@ -1,47 +1,23 @@
-<!doctype html>
-<html>
-  <head>
-    <title>&lt;catalyst-toggle-button&gt; Basic Demo</title>
+<!DOCTYPE html><html><head><title>&lt;catalyst-toggle-button&gt; Basic Demo</title><script>console.info('custom-elements-es5-adapter is not in use.'); // eslint-disable-line no-console</script><script>if (!window.customElements) { document.write('<!--'); }</script><script src="../../../@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js"></script><!--! do not remove --><script src="../../../@webcomponents/webcomponentsjs/webcomponents-loader.js"></script><script src="../../../@webcomponents/shadycss/scoping-shim.min.js"></script><script src="../../../@webcomponents/shadycss/apply-shim.min.js"></script><script src="../../../marked/marked.min.js"></script><script src="imports-importer.js"></script><style>body{font-family:Arial}</style></head><body><h3>Basic:</h3><demo-snippet>
+    <template>
+      <catalyst-toggle-button>My Button</catalyst-toggle-button>
+    </template>
+  </demo-snippet>
 
-    <!-- Web Component Pollyfills -->
-    <script src="../../../@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js"></script>
-    <script src="../../../@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-    <script src="../../../@webcomponents/shadycss/scoping-shim.min.js"></script>
-    <script src="../../../@webcomponents/shadycss/apply-shim.min.js"></script>
+  <h3>With Label:</h3>
+  <demo-snippet>
+    <template>
+      <label for="toggle-button" id="toggle-button-label" style="display:inline-block;width:100px;">Not Pressed</label>
+      <catalyst-toggle-button id="toggle-button">My Button</catalyst-toggle-button>
 
-    <!-- Import the things we need -->
-    <script src="../../../marked/marked.min.js"></script>
-    <script src="imports-importer.js"></script>
-
-    <style>
-      body {
-        font-family: Arial;
-      }
-    </style>
-  </head>
-  <body>
-    <h3>Basic:</h3>
-    <demo-snippet>
-      <template>
-        <catalyst-toggle-button>My Button</catalyst-toggle-button>
-      </template>
-    </demo-snippet>
-
-    <h3>With Label:</h3>
-    <demo-snippet>
-      <template>
-        <label for="toggle-button" id="toggle-button-label" style="display:inline-block;width:100px;">Not Pressed</label>
-        <catalyst-toggle-button id="toggle-button">My Button</catalyst-toggle-button>
-
-        <script>
-          let toggleButton = document.querySelector('#toggle-button');
-          let toggleButtonLabel = document.querySelector('#toggle-button-label');
-          toggleButton.addEventListener('change', (event) => {
-            toggleButtonLabel.textContent = event.detail.pressed ? 'Pressed' : 'Not Pressed';
-          });
-        </script>
-      </template>
-    </demo-snippet>
-  </body>
-  </body>
-</html>
+      <script>
+        let toggleButton = document.querySelector('#toggle-button');
+        let toggleButtonLabel = document.querySelector('#toggle-button-label');
+        toggleButton.addEventListener('change', event => {
+          toggleButtonLabel.textContent = event.detail.pressed
+            ? 'Pressed'
+            : 'Not Pressed';
+        });
+      </script>
+    </template>
+  </demo-snippet></body></html>

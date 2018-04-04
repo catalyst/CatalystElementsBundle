@@ -1,0 +1,25 @@
+{
+  "name": "@catalyst-elements/catalyst-lazy-properties-mixin",
+  "license": "BSD-3-Clause",
+  "version": "0.1.0",
+  "description": "A mixin that allows for lazy properties on an element.",
+  "main": "catalyst-lazy-properties-mixin.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/catalyst/catalyst-lazy-properties-mixin.git"
+  },
+  "author": {
+    "name": "Rebecca Stevens",
+    "email": "rebeccastevens@catalyst.net.nz"
+  },
+  "keywords": ["web-components", "mixin", "lazy", "properties"],
+  "bugs": {
+    "url": "https://github.com/catalyst/catalyst-lazy-properties-mixin/issues"
+  },
+  "homepage":
+    "https://github.com/catalyst/catalyst-lazy-properties-mixin#readme",
+  "scripts": {
+    "prepublishOnly":
+      "node -e \"assert.equal(require('./package.json').version, require('../package.json').version)\""
+  }
+}

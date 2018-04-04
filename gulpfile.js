@@ -1,6 +1,23 @@
-require('./tasks/clean.js');
+/* eslint-env node */
 
-require('./tasks/build.js'); // Task: build
-require('./tasks/analyze'); // Task: analyze
-require('./tasks/docs.js'); // Task: build-docs
-require('./tasks/fix-dependencies.js'); // Task: fix-dependencies
+const gulp = require('gulp');
+const buildProcess = require('@catalyst-elements/build-process');
+
+buildProcess.setConfig('./package.json', {
+  componenet: {
+    name: 'catalyst-elements'
+  },
+
+  build: {
+    bundleImports: true,
+    exportAllStaticImports: true
+  },
+
+  src: {
+    entrypoint: 'bundle.mjs'
+  }
+});
+
+for (const [taskName, taskFunction] of Object.entries(buildProcess.tasks)) {
+  gulp.task(taskName, taskFunction(gulp));
+}
